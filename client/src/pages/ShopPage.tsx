@@ -34,7 +34,6 @@ export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState<number | null>(null) // null = All
   const [search,     setSearch]             = useState('')
   const [sort,       setSort]               = useState<SortKey>('newest')
-  const [filtersOpen, setFiltersOpen]       = useState(false)
 
   useEffect(() => {
     document.title = isAr ? 'حجابي | المتجر' : 'Hijappy | Shop'
