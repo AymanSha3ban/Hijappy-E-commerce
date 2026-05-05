@@ -15,12 +15,13 @@ const PORT = process.env.PORT ?? 3001;
 // ─────────────────────────────────────────────
 // Global Middleware
 // ─────────────────────────────────────────────
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL ?? 'http://localhost:5173',
-    credentials: true,
-  }),
-);
+app.use(cors({
+  origin: [
+    'https://hijappy-e-commerce.vercel.app',
+    'http://localhost:5173'
+  ],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
