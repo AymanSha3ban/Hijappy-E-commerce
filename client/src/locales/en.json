@@ -25,7 +25,21 @@
     "most_wanted_label": "Best Sellers",
     "most_wanted_title": "Most Wanted",
     "view_shop": "View All in Shop →",
-    "shop_now": "Shop Now"
+    "shop_now": "Shop Now",
+    "about_label": "Our Story",
+    "about_title": "More Than a Store",
+    "about_body": "Hijappy is more than just a store; it is a destination for every woman seeking luxury and comfort. We curate our fabrics carefully to tell a story of elegance that fits you.",
+    "about_cta": "Explore the Collection",
+    "about_stat1_num": "500+",
+    "about_stat1_label": "Happy Customers",
+    "about_stat2_num": "50+",
+    "about_stat2_label": "Premium Fabrics",
+    "about_stat3_num": "3",
+    "about_stat3_label": "Years of Elegance",
+    "category_pill_label": "Shop by Fabric",
+    "category_silk": "Silk",
+    "category_cotton": "Cotton",
+    "category_chiffon": "Chiffon"
   },
   "features": {
     "secure": "Secure Checkout",

@@ -25,7 +25,21 @@
     "most_wanted_label": "الأكثر طلباً",
     "most_wanted_title": "الأكثر رغبةً",
     "view_shop": "عرض الكل في المتجر →",
-    "shop_now": "تسوقي الآن"
+    "shop_now": "تسوقي الآن",
+    "about_label": "عن العلامة",
+    "about_title": "أكثر من مجرد متجر",
+    "about_body": "حجابي هي أكثر من مجرد متجر؛ إنها وجهة لكل امرأة تبحث عن الفخامة والراحة في آن واحد. نختار أقمشتنا بعناية لنسطر قصة أناقة تليق بِكِ.",
+    "about_cta": "استكشفي المجموعة",
+    "about_stat1_num": "+500",
+    "about_stat1_label": "عميلة سعيدة",
+    "about_stat2_num": "+50",
+    "about_stat2_label": "قماش فاخر",
+    "about_stat3_num": "3",
+    "about_stat3_label": "سنوات من الأناقة",
+    "category_pill_label": "تسوقي حسب القماش",
+    "category_silk": "حرير",
+    "category_cotton": "قطن",
+    "category_chiffon": "شيفون"
   },
   "features": {
     "secure": "دفع آمن",

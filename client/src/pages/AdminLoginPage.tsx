@@ -64,12 +64,25 @@ export default function AdminLoginPage() {
 
           {/* Logo */}
           <div className="text-center mb-8 sm:mb-10">
-            <div
-              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-white mx-auto mb-4 sm:mb-5 shadow-md"
-              style={{ background: 'linear-gradient(135deg, var(--color-warm-taupe), var(--color-mocha))' }}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 18 }}
+              className="relative w-16 h-16 rounded-xl flex items-center justify-center overflow-hidden mx-auto mb-4 sm:mb-5"
+              style={{
+                background: 'rgba(255,255,255,0.55)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
+                border: '1px solid rgba(200,169,154,0.3)',
+                boxShadow: '0 8px 32px rgba(107,79,58,0.18)',
+              }}
             >
-              <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 400 }}>H</span>
-            </div>
+              <img
+                src="/hijappy.png"
+                alt="Hijappy Logo"
+                className="w-full h-full object-cover"
+                style={{ filter: 'drop-shadow(0 0 6px rgba(161,89,19,0.3))' }}
+              />
+            </motion.div>
             <h1
               className="text-2xl sm:text-3xl mb-1"
               style={{ color: 'var(--color-charcoal)', fontFamily: 'var(--font-display)' }}

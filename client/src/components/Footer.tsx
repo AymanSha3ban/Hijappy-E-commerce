@@ -39,10 +39,10 @@ const socialLinks = [
 ]
 
 const quickLinks = [
-  { label: { ar: 'المجموعة',   en: 'Collection'  }, to: '/'       },
-  { label: { ar: 'منتجاتنا',  en: 'Products'    }, to: '/'       },
-  { label: { ar: 'عن العلامة', en: 'About Brand' }, to: '/'       },
-  { label: { ar: 'لوحة التحكم', en: 'Admin'      }, to: '/admin'  },
+  { label: { ar: 'المجموعة',   en: 'Collection'  }, to: '/'        },
+  { label: { ar: 'منتجاتنا',  en: 'Products'    }, to: '/shop'    },
+  { label: { ar: 'عن العلامة', en: 'About Brand' }, to: '/#about'  },
+  { label: { ar: 'لوحة التحكم', en: 'Admin'      }, to: '/admin'   },
 ]
 
 // ── Newsletter sub-component ──────────────────────────────────────────────────

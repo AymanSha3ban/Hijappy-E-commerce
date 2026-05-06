@@ -414,11 +414,164 @@ export default function HomePage() {
           <p className="mb-8 text-base" style={{ color: 'var(--color-mocha)', lineHeight: 1.9 }}>
             {isAr ? 'تصفّحي مجموعتنا الكاملة بفلاتر ذكية للعثور على قطعتك المثالية.' : 'Browse our complete collection with smart filters to find your perfect piece.'}
           </p>
+
+          {/* ── Category Pills ── */}
+          <motion.div
+            className="flex flex-wrap items-center justify-center gap-3 mb-8"
+            initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.55, delay: 0.15 }}
+          >
+            <span className="text-xs uppercase tracking-widest" style={{ color: 'var(--color-warm-taupe)', letterSpacing: '0.18em' }}>
+              {t('home.category_pill_label')}
+            </span>
+            {[
+              { en: t('home.category_silk'),    ar: t('home.category_silk'),    slug: 'silk'    },
+              { en: t('home.category_cotton'),  ar: t('home.category_cotton'),  slug: 'cotton'  },
+              { en: t('home.category_chiffon'), ar: t('home.category_chiffon'), slug: 'chiffon' },
+            ].map((cat) => (
+              <motion.div key={cat.slug} whileHover={{ scale: 1.06, y: -2 }} whileTap={{ scale: 0.96 }} transition={{ type: 'spring', stiffness: 340, damping: 22 }}>
+                <Link
+                  to={`/shop?category=${cat.slug}`}
+                  className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full text-sm font-medium no-underline"
+                  style={{
+                    background: 'rgba(255,255,255,0.72)',
+                    backdropFilter: 'blur(12px)',
+                    border: '1.5px solid rgba(200,169,154,0.35)',
+                    color: 'var(--color-mocha)',
+                    boxShadow: '0 2px 12px rgba(44,34,34,0.06)',
+                    transition: 'all 0.25s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'var(--color-charcoal)'
+                    e.currentTarget.style.color = 'var(--color-gold-light)'
+                    e.currentTarget.style.borderColor = 'var(--color-charcoal)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.72)'
+                    e.currentTarget.style.color = 'var(--color-mocha)'
+                    e.currentTarget.style.borderColor = 'rgba(200,169,154,0.35)'
+                  }}
+                >
+                  {isAr ? cat.ar : cat.en}
+                </Link>
+              </motion.div>
+            ))}
+          </motion.div>
+
           <div className="divider-gold" />
           <motion.div className="mt-8" whileHover={{ scale: 1.03 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
             <Link to="/shop" className="btn-primary">{isAr ? 'المتجر الكامل' : 'Visit the Shop'}</Link>
           </motion.div>
         </motion.div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════
+          ABOUT US — Split-screen storytelling
+      ══════════════════════════════════════════════════════════ */}
+      <section id="about" className="relative overflow-hidden" style={{ background: 'var(--color-cream)' }}>
+        {/* ambient orb */}
+        <div className="ambient-orb" style={{ width: 480, height: 480, top: '10%', right: '-10%', opacity: 0.08,
+          background: 'radial-gradient(circle, var(--color-gold), transparent 70%)' }} />
+
+        <div className="max-w-7xl mx-auto px-5 py-24 grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center">
+
+          {/* ── Image side ── */}
+          <motion.div
+            initial={{ opacity: 0, x: isAr ? 48 : -48 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: EASE }}
+            className={isAr ? 'md:order-2' : ''}
+            style={{ position: 'relative' }}
+          >
+            <div style={{
+              borderRadius: '2rem', overflow: 'hidden', aspectRatio: '4/5',
+              boxShadow: '0 32px 80px -12px rgba(44,34,34,0.22)',
+            }}>
+              <img
+                src="https://images.unsplash.com/photo-1614786269829-d24616faf56d?w=800&q=80"
+                alt="Hijappy Brand Story"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              />
+            </div>
+            {/* floating gold badge */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.85 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.45, type: 'spring', stiffness: 260, damping: 20 }}
+              style={{
+                position: 'absolute',
+                bottom: '-1.5rem',
+                [isAr ? 'left' : 'right']: '-1.5rem',
+                background: 'linear-gradient(135deg, var(--color-warm-taupe), var(--color-mocha))',
+                borderRadius: '1.5rem',
+                padding: '1.25rem 1.75rem',
+                boxShadow: '0 12px 40px rgba(107,79,58,0.35)',
+                color: '#fff',
+                minWidth: 130,
+              }}
+            >
+              <p style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 600, lineHeight: 1, margin: 0 }}>
+                {t('home.about_stat1_num')}
+              </p>
+              <p style={{ fontSize: '0.72rem', opacity: 0.82, marginTop: '0.3rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                {t('home.about_stat1_label')}
+              </p>
+            </motion.div>
+          </motion.div>
+
+          {/* ── Text side ── */}
+          <motion.div
+            initial={{ opacity: 0, x: isAr ? -48 : 48 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.1, ease: EASE }}
+            className="flex flex-col gap-6"
+          >
+            <div>
+              <p className="text-xs uppercase tracking-widest mb-3" style={{ color: 'var(--color-rose-gold)', letterSpacing: '0.22em' }}>
+                {t('home.about_label')}
+              </p>
+              <h2 className="text-3xl md:text-4xl mb-4" style={{ color: 'var(--color-charcoal)' }}>
+                {t('home.about_title')}
+              </h2>
+              <div className="divider-gold" style={{ margin: '0 0 1.5rem' }} />
+            </div>
+
+            <p className="text-base leading-relaxed" style={{ color: 'var(--color-mocha)', lineHeight: 2, maxWidth: '34rem' }}>
+              {t('home.about_body')}
+            </p>
+
+            {/* Stats row */}
+            <div className="grid grid-cols-3 gap-4 py-6 border-y" style={{ borderColor: 'var(--color-blush)' }}>
+              {[
+                { num: t('home.about_stat1_num'), label: t('home.about_stat1_label') },
+                { num: t('home.about_stat2_num'), label: t('home.about_stat2_label') },
+                { num: t('home.about_stat3_num'), label: t('home.about_stat3_label') },
+              ].map((stat, i) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
+                  className="text-center"
+                >
+                  <p style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 600, color: 'var(--color-warm-taupe)', lineHeight: 1, marginBottom: '0.35rem' }}>
+                    {stat.num}
+                  </p>
+                  <p className="text-xs uppercase tracking-wider" style={{ color: 'var(--color-rose-sand)', letterSpacing: '0.12em' }}>
+                    {stat.label}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div whileHover={{ scale: 1.03 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
+              <Link to="/shop" className="btn-primary">{t('home.about_cta')}</Link>
+            </motion.div>
+          </motion.div>
+        </div>
       </section>
 
       <Footer />
