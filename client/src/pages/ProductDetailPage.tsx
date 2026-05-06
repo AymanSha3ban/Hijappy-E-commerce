@@ -10,6 +10,20 @@ import {
   Phone, Plus, Minus, ShieldCheck, Star,
 } from 'lucide-react'
 
+/** Resolves any image path/URL to a displayable src.
+ *  - Full URLs (http/https) → used as-is (Cloudinary, external, direct server URLs)
+ *  - Server-relative paths  → prepend API base origin
+ *  - Plain filenames        → assumed to live at /uploads/ on the server
+ */
+const API_BASE = (import.meta.env.VITE_API_URL as string ?? '').replace(/\/api\/?$/, '')
+
+function resolveImageUrl(url: string): string {
+  if (!url) return ''
+  if (url.startsWith('http://') || url.startsWith('https://')) return url
+  if (url.startsWith('/')) return `${API_BASE}${url}`
+  return `${API_BASE}/uploads/${url}`
+}
+
 interface Product {
   id: number; name: string; description: string; price: number
   images: string[]; colors: string[]; stock: number; category?: { name: string }
@@ -44,7 +58,8 @@ export default function ProductDetailPage() {
 
   const fallback = 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=800&q=80'
   // Safe: returns [fallback] when product is null (during loading)
-  const images = product?.images?.length ? product.images : [fallback]
+  const raw    = product?.images?.length ? product.images : [fallback]
+  const images = raw.map(resolveImageUrl)
   const imagesLen = images.length
 
   const goTo = useCallback((idx: number, dir?: number) => {

@@ -4,6 +4,20 @@ import { Link } from 'react-router-dom'
 import { ShoppingBag, ArrowUpRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+/** Resolves any image path/URL to a displayable src.
+ *  - Full URLs (http/https) → used as-is (Cloudinary, external, direct server URLs)
+ *  - Server-relative paths  → prepend API base origin
+ *  - Plain filenames        → assumed to live at /uploads/ on the server
+ */
+const API_BASE = (import.meta.env.VITE_API_URL as string ?? '').replace(/\/api\/?$/, '')
+
+function resolveImageUrl(url: string): string {
+  if (!url) return ''
+  if (url.startsWith('http://') || url.startsWith('https://')) return url
+  if (url.startsWith('/')) return `${API_BASE}${url}`
+  return `${API_BASE}/uploads/${url}`
+}
+
 interface Product {
   id: number
   name: string
@@ -42,9 +56,10 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   }
 
   // Images & auto-gallery
-  const images = product.images?.length
+  const raw = product.images?.length
     ? product.images
     : ['https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80']
+  const images     = raw.map(resolveImageUrl)
   const hasMultiple = images.length > 1
 
   useEffect(() => {

@@ -109,6 +109,7 @@ export default function LeadFormModal({ isOpen, onClose, product, initialQuantit
             }}
           >
             <div
+              className="modal-scroll"
               style={{
                 position: 'relative', width: '100%', maxWidth: 460,
                 borderRadius: '2rem', overflow: 'hidden',
@@ -122,8 +123,12 @@ export default function LeadFormModal({ isOpen, onClose, product, initialQuantit
                 boxShadow: '0 40px 100px rgba(44,34,34,0.28), 0 12px 32px rgba(44,34,34,0.10), inset 0 1px 0 rgba(255,255,255,0.8)',
               }}
             >
-              {/* Gold + Rose gradient top bar */}
-              <div style={{ height: 3, background: 'linear-gradient(90deg, var(--color-warm-taupe), var(--color-gold), var(--color-rose-gold), var(--color-rose-sand))' }} />
+              {/* Gold + Rose gradient top bar — edge-to-edge, direct first child of overflow:hidden */}
+              <div style={{
+                height: 3,
+                background: 'linear-gradient(90deg, var(--color-warm-taupe), var(--color-gold), var(--color-rose-gold), var(--color-rose-sand))',
+                flexShrink: 0,
+              }} />
 
               {/* Close button */}
               <motion.button

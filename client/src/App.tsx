@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
+import ScrollToTop from './components/ScrollToTop'
 import HomePage from './pages/HomePage'
 import ShopPage from './pages/ShopPage'
 import ProductDetailPage from './pages/ProductDetailPage'
@@ -40,7 +41,9 @@ export default function App() {
   const location = useLocation()
 
   return (
-    <AnimatePresence mode="wait">
+    <>
+      <ScrollToTop />
+      <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         {/* ── Public Storefront ── */}
         <Route path="/"            element={<PageWrapper><HomePage /></PageWrapper>} />
@@ -91,5 +94,6 @@ export default function App() {
         } />
       </Routes>
     </AnimatePresence>
+    </>
   )
 }

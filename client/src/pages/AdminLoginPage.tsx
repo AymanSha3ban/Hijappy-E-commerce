@@ -25,18 +25,18 @@ export default function AdminLoginPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-6"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden p-4 sm:p-6"
       style={{ background: 'linear-gradient(135deg, var(--color-parchment) 0%, var(--color-blush) 100%)' }}
     >
-      {/* Decorative blobs */}
+      {/* Decorative blobs — clipped by overflow-hidden on parent */}
       <div
         className="absolute rounded-full pointer-events-none"
-        style={{ width: 560, height: 560, top: -130, right: -130, opacity: 0.28,
+        style={{ width: 420, height: 420, top: -100, right: -100, opacity: 0.28,
           background: 'radial-gradient(circle, var(--color-rose-sand), transparent 70%)' }}
       />
       <div
         className="absolute rounded-full pointer-events-none"
-        style={{ width: 320, height: 320, bottom: -80, left: -80, opacity: 0.15,
+        style={{ width: 260, height: 260, bottom: -60, left: -60, opacity: 0.15,
           background: 'radial-gradient(circle, var(--color-gold), transparent 70%)' }}
       />
 
@@ -44,10 +44,10 @@ export default function AdminLoginPage() {
         initial={{ opacity: 0, y: 36, scale: 0.96 }}
         animate={{ opacity: 1, y: 0,  scale: 1    }}
         transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className="relative w-full max-w-md"
+        className="relative w-full max-w-md mx-auto"
       >
         <div
-          className="rounded-3xl p-10"
+          className="rounded-3xl p-6 sm:p-10"
           style={{
             background:    'rgba(250,246,242,0.95)',
             backdropFilter:'blur(24px)',
@@ -56,21 +56,24 @@ export default function AdminLoginPage() {
             border:        '1px solid rgba(200,169,154,0.18)',
           }}
         >
-          {/* Gold top stripe */}
+          {/* Gold top stripe — flush with card edges */}
           <div
-            className="absolute top-0 start-0 end-0 h-0.5 rounded-t-3xl"
+            className="absolute top-0 inset-x-0 h-0.5 rounded-t-3xl"
             style={{ background: 'linear-gradient(90deg, var(--color-warm-taupe), var(--color-gold), var(--color-rose-sand))' }}
           />
 
           {/* Logo */}
-          <div className="text-center mb-10">
+          <div className="text-center mb-8 sm:mb-10">
             <div
-              className="w-16 h-16 rounded-full flex items-center justify-center text-white mx-auto mb-5 shadow-md"
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-white mx-auto mb-4 sm:mb-5 shadow-md"
               style={{ background: 'linear-gradient(135deg, var(--color-warm-taupe), var(--color-mocha))' }}
             >
-              <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.6rem', fontWeight: 400 }}>H</span>
+              <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 400 }}>H</span>
             </div>
-            <h1 className="text-3xl mb-1" style={{ color: 'var(--color-charcoal)' }}>
+            <h1
+              className="text-2xl sm:text-3xl mb-1"
+              style={{ color: 'var(--color-charcoal)', fontFamily: 'var(--font-display)' }}
+            >
               {t('admin.login.title')}
             </h1>
             <p className="text-sm" style={{ color: 'var(--color-warm-taupe)' }}>

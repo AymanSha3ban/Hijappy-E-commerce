@@ -74,13 +74,25 @@ body {
 }
 
 /* ─────────────────────────────────────────────
-   SCROLLBAR
+   SCROLLBAR — Global
 ───────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--color-parchment); }
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(to bottom, var(--color-rose-sand), var(--color-warm-taupe));
   border-radius: 99px;
+}
+
+/* ─────────────────────────────────────────────
+   SCROLLBAR — Lead Form Modal (brand-themed)
+───────────────────────────────────────────── */
+.modal-scroll { scrollbar-width: thin; scrollbar-color: var(--color-gold) transparent; }
+.modal-scroll::-webkit-scrollbar       { width: 5px; }
+.modal-scroll::-webkit-scrollbar-track { background: transparent; border-radius: 99px; }
+.modal-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, var(--color-gold), var(--color-warm-taupe));
+  border-radius: 99px;
+  min-height: 32px;
 }
 
 /* ─────────────────────────────────────────────
