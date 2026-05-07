@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Mail, ArrowRight, ArrowLeft, Heart } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useTheme } from '../contexts/ThemeContext'
+import Magnetic from './Magnetic'
 
 // ── Inline brand SVGs (lucide-react has no brand icons) ───────────────────────
 type IconProps = { size?: number; strokeWidth?: number }
@@ -24,19 +25,18 @@ function FbIcon({ size = 16, strokeWidth = 1.5 }: IconProps) {
     </svg>
   )
 }
-function YtIcon({ size = 16, strokeWidth = 1.5 }: IconProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
-      <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" />
-    </svg>
-  )
-}
+// function YtIcon({ size = 16, strokeWidth = 1.5 }: IconProps) {
+//   return (
+//     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+//       <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
+//       <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" />
+//     </svg>
+//   )
+// }
 
 const socialLinks = [
-  { icon: IgIcon, href: 'https://instagram.com', label: 'Instagram' },
-  { icon: FbIcon,  href: 'https://facebook.com',  label: 'Facebook'  },
-  { icon: YtIcon,   href: 'https://youtube.com',   label: 'YouTube'  },
+  { icon: IgIcon, href: 'https://www.instagram.com/lo0uli.veil?igsh=YTEza3Nidm54YmRs', label: 'Instagram' },
+  { icon: FbIcon,  href: 'https://www.facebook.com/share/g/1BcE3Vdkg7/?mibextid=wwXIfr',  label: 'Facebook'  }
 ]
 
 const quickLinks = [
@@ -117,29 +117,40 @@ export default function Footer() {
             className="lg:col-span-1"
           >
             <div className="flex items-center gap-4 mb-6">
-              <div className="relative w-12 h-12">
-                <div 
-                  className="absolute inset-0 rounded-full blur-md opacity-30"
-                  style={{ background: 'var(--color-pastel-rose)' }}
-                />
-                <img 
-                  src="/hijappy.png" 
-                  alt="Hijappy" 
-                  className="relative z-10 w-full h-full object-contain"
-                />
-              </div>
-              <div className="flex flex-col">
-                <span style={{ 
-                  fontFamily: isRTL ? 'var(--font-arabic)' : 'var(--font-display)', 
-                  fontWeight: 700, 
-                  fontSize: '1.65rem', 
-                  color: isDark ? '#fff' : 'var(--color-charcoal)',
-                  lineHeight: 1
-                }}>
-                  Hijappy
-                </span>
-                <span className="text-[0.6rem] uppercase tracking-[0.25em] opacity-50 mt-1">Luxury Collection</span>
-              </div>
+               <Magnetic>
+                        <Link to="/" className="flex items-center gap-4 no-underline group relative z-10 transition-opacity hover:opacity-90" aria-label="Louli Home">
+                        {/* Logo Container - Made it more compact with a larger image focus */}
+                    
+                            <img 
+                              src="/logo.png" 
+                              alt="Louli" 
+                              className="w-20 h-20 object-contain transform transition-transform duration-300 group-hover:scale-150" 
+                            />
+              
+                          {/* Brand Text */}
+                          <div className="flex flex-col justify-center leading-tight">
+                          <h1 style={{
+                           fontFamily: isRTL ? 'var(--font-arabic)' : 'var(--font-display)',
+                           fontWeight: 700,
+                           fontSize: '1.7rem', // تكبير الخط شوية عشان يوازي اللوجو
+                           color: isDark ? 'var(--color-dark-text)' : 'var(--color-charcoal)',
+                           letterSpacing: isRTL ? '0' : '-0.04em',
+                           }}>
+                             Louli
+                          </h1>
+                         <span style={{
+                           fontSize: '0.6rem',
+                           textTransform: 'uppercase',
+                           letterSpacing: isRTL ? '0' : '0.4em',
+                           color: 'var(--color-rose-sand)',
+                           opacity: 0.9,
+                           marginTop: '-2px'
+                           }}>
+                          {isRTL ? 'للفخامة عنوان' : 'Luxury Hijab'}
+                          </span>
+                          </div>
+                        </Link>
+                      </Magnetic>
             </div>
             <p
               className="text-sm leading-relaxed mb-6"
@@ -244,7 +255,7 @@ export default function Footer() {
               onMouseLeave={(e) => (e.currentTarget.style.color = isDark ? 'var(--color-dark-muted)' : 'var(--color-mocha)')}
             >
               <Mail size={14} strokeWidth={1.5} />
-              hello@hijappy.com
+              hello@Louli.com
             </a>
             <p
               className="text-xs leading-relaxed"

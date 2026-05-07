@@ -93,46 +93,36 @@ export default function Navbar() {
       >
         {/* ── Logo ── */}
         <Magnetic>
-          <Link to="/" className="flex items-center gap-4 no-underline group relative z-10" aria-label="Hijappy Home">
-            <div className="relative w-12 h-12 md:w-14 md:h-14">
-              <motion.div
-                className="absolute inset-0 rounded-full"
-                style={{ 
-                  background: 'var(--color-parchment)', 
-                  border: '1.5px solid var(--color-rose-sand)',
-                  boxShadow: '0 4px 12px rgba(44,34,34,0.06)' 
-                }}
-                whileHover={{ scale: 1.05 }}
-              />
+          <Link to="/" className="flex items-center gap-4 no-underline group relative z-10 transition-opacity hover:opacity-90" aria-label="Louli Home">
+          {/* Logo Container - Made it more compact with a larger image focus */}
+      
               <img 
-                src="/hijappy.png" 
-                alt="Hijappy" 
-                className="absolute inset-0 w-full h-full object-contain p-1.5"
+                src="/logo.png" 
+                alt="Louli" 
+                className="w-20 h-20 object-contain transform transition-transform duration-300 group-hover:scale-150" 
               />
-            </div>
-            <div className="flex flex-col leading-none">
-              <span style={{
-                fontFamily:    isRTL ? 'var(--font-arabic)' : 'var(--font-display)',
-                fontWeight:    isRTL ? 700 : 500,
-                fontSize:      '1.5rem',
-                color:         isDark ? 'var(--color-dark-text)' : 'var(--color-charcoal)',
-                letterSpacing: isRTL ? 0 : '-0.02em',
-                lineHeight:    '1',
-              }}>
-                Hijappy
-              </span>
-              <span style={{
-                fontSize:      '0.6rem',
-                textTransform: 'uppercase',
-                letterSpacing: '0.3em',
-                color:         'var(--color-warm-taupe)',
-                opacity:       0.8,
-                marginTop:     '4px',
-                fontFamily:    'var(--font-body)',
-                fontWeight:    500,
-              }}>
-                {isRTL ? 'للفخامة عنوان' : 'Luxury Hijab'}
-              </span>
+
+            {/* Brand Text */}
+            <div className="flex flex-col justify-center leading-tight">
+            <h1 style={{
+             fontFamily: isRTL ? 'var(--font-arabic)' : 'var(--font-display)',
+             fontWeight: 700,
+             fontSize: '1.7rem', // تكبير الخط شوية عشان يوازي اللوجو
+             color: isDark ? 'var(--color-dark-text)' : 'var(--color-charcoal)',
+             letterSpacing: isRTL ? '0' : '-0.04em',
+             }}>
+               Louli
+            </h1>
+           <span style={{
+             fontSize: '0.6rem',
+             textTransform: 'uppercase',
+             letterSpacing: isRTL ? '0' : '0.4em',
+             color: 'var(--color-rose-sand)',
+             opacity: 0.9,
+             marginTop: '-2px'
+             }}>
+            {isRTL ? 'للفخامة عنوان' : 'Luxury Hijab'}
+            </span>
             </div>
           </Link>
         </Magnetic>
