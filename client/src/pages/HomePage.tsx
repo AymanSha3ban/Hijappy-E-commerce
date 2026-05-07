@@ -346,12 +346,12 @@ export default function HomePage() {
 
         {/* Prev / Next arrows */}
         <button onClick={prevSlide}
-          className="absolute top-1/2 -translate-y-1/2 start-5 z-20 w-11 h-11 rounded-full flex items-center justify-center border-none cursor-pointer"
+          className="hidden md:flex absolute top-1/2 -translate-y-1/2 start-5 z-20 w-11 h-11 rounded-full items-center justify-center border-none cursor-pointer"
           style={{ background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(8px)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)' }}>
           <ChevronLeft size={20} strokeWidth={1.5} />
         </button>
         <button onClick={nextSlide}
-          className="absolute top-1/2 -translate-y-1/2 end-5 z-20 w-11 h-11 rounded-full flex items-center justify-center border-none cursor-pointer"
+          className="hidden md:flex absolute top-1/2 -translate-y-1/2 end-5 z-20 w-11 h-11 rounded-full items-center justify-center border-none cursor-pointer"
           style={{ background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(8px)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)' }}>
           <ChevronRight size={20} strokeWidth={1.5} />
         </button>
