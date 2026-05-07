@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import crypto from 'crypto';
 import multer from 'multer';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import cloudinary from '../lib/cloudinary';
@@ -7,17 +8,20 @@ import { verifyToken } from '../middleware/auth';
 // ── Multer × Cloudinary Storage ──────────────────────────────────────────────
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: async (_req, file) => ({
-    folder: 'hijappy/products',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
-    transformation: [{ width: 1200, height: 1600, crop: 'limit', quality: 'auto:best' }],
-    public_id: `${Date.now()}-${file.originalname.replace(/\.[^.]+$/, '').replace(/\s+/g, '-')}`,
-  }),
+  params: async (_req, file) => {
+    const uniqueId = crypto.randomUUID();
+    return {
+      folder: 'hijappy/products',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
+      transformation: [{ width: 1200, height: 1600, crop: 'limit', quality: 'auto:best' }],
+      public_id: `hijappy-product-${uniqueId}`,
+    };
+  },
 });
 
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB per file
+  limits: { fileSize: 2 * 1024 * 1024 }, // 2 MB per file
 });
 
 const router = Router();

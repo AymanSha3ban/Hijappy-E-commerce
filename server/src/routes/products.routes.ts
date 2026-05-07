@@ -1,9 +1,35 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
+import cloudinary from '../lib/cloudinary';
 import { verifyToken } from '../middleware/auth';
 
 const router = Router();
+ 
+// ── Helper: Cleanup Cloudinary Images ────────────────────────────────────────
+const deleteImagesFromCloudinary = async (urls: string[]) => {
+  try {
+    const publicIds = urls
+      .map((url) => {
+        // Cloudinary URL: https://res.cloudinary.com/cloud_name/image/upload/v1234567/folder/public_id.jpg
+        const parts = url.split('/');
+        const uploadIndex = parts.indexOf('upload');
+        if (uploadIndex === -1) return null;
+        // The public_id starts after the version (v1234567)
+        const publicIdWithExt = parts.slice(uploadIndex + 2).join('/');
+        // Remove file extension
+        return publicIdWithExt.replace(/\.[^/.]+$/, '');
+      })
+      .filter(Boolean) as string[];
+
+    if (publicIds.length > 0) {
+      console.log('Cleaning up Cloudinary images:', publicIds);
+      await Promise.all(publicIds.map((id) => cloudinary.uploader.destroy(id)));
+    }
+  } catch (error) {
+    console.error('Cloudinary cleanup error:', error);
+  }
+};
 
 // ── Zod Schema ────────────────────────────────────────────────────────────────
 
@@ -70,15 +96,25 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
 // ── POST /api/products — Protected ───────────────────────────────────────────
 router.post('/', verifyToken, async (req: Request, res: Response): Promise<void> => {
   const parsed = productSchema.safeParse(req.body);
+
   if (!parsed.success) {
+    // If validation fails, cleanup any uploaded images provided in the request
+    if (req.body.images && Array.isArray(req.body.images)) {
+      await deleteImagesFromCloudinary(req.body.images);
+    }
     res.status(400).json({ error: parsed.error.flatten() });
     return;
   }
+
   try {
     const product = await prisma.product.create({ data: parsed.data });
     res.status(201).json(product);
-  } catch {
-    res.status(409).json({ error: 'Product slug already exists.' });
+  } catch (error) {
+    // If database creation fails, cleanup the images
+    if (parsed.data.images) {
+      await deleteImagesFromCloudinary(parsed.data.images);
+    }
+    res.status(409).json({ error: 'Product slug already exists or database error.' });
   }
 });
 
@@ -103,10 +139,30 @@ router.put('/:id', verifyToken, async (req: Request, res: Response): Promise<voi
 // ── DELETE /api/products/:id — Protected ─────────────────────────────────────
 router.delete('/:id', verifyToken, async (req: Request, res: Response): Promise<void> => {
   try {
-    await prisma.product.delete({ where: { id: Number(req.params.id) } });
-    res.json({ message: 'Product deleted.' });
-  } catch {
-    res.status(409).json({ error: 'Cannot delete — product has associated orders.' });
+    const productId = Number(req.params.id);
+
+    // 1. Find product to get image URLs
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+      select: { images: true },
+    });
+
+    if (!product) {
+      res.status(404).json({ error: 'Product not found.' });
+      return;
+    }
+
+    // 2. Delete from database
+    await prisma.product.delete({ where: { id: productId } });
+
+    // 3. Cleanup images from Cloudinary
+    if (product.images && product.images.length > 0) {
+      await deleteImagesFromCloudinary(product.images);
+    }
+
+    res.json({ message: 'Product and associated images deleted.' });
+  } catch (error) {
+    res.status(409).json({ error: 'Cannot delete — product may have associated orders.' });
   }
 });
 
