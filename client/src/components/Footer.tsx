@@ -122,11 +122,7 @@ export default function Footer() {
                         {/* Logo Container - Made it more compact with a larger image focus */}
                     
                             <img 
-<<<<<<< HEAD
                               src="/weblogo.png" 
-=======
-                              src="/logo1.png" 
->>>>>>> 7686470 (change color and logo)
                               alt="Louli" 
                               className="w-20 h-20 object-contain transform transition-transform duration-300 group-hover:scale-150" 
                             />
