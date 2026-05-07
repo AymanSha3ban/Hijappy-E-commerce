@@ -360,14 +360,14 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════════
           NEW ARRIVALS
       ══════════════════════════════════════════════════════════ */}
-      <section className="max-w-7xl mx-auto px-5 py-20">
+      <section className="max-w-7xl mx-auto px-5 py-24 md:py-32">
         <SectionHeader label={t('home.new_arrivals_label')} title={t('home.new_arrivals_title')} />
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-            {Array.from({ length: 4 }).map((_, i) => <div key={i} className="skeleton rounded-2xl" style={{ aspectRatio: '3/4' }} />)}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} index={i} />)}
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {newArrivals.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
           </div>
         )}
