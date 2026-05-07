@@ -2,6 +2,7 @@
   "nav": {
     "collection": "Home",
     "shop": "Shop",
+    "favorites": "Favorites",
     "admin": "Admin"
   },
   "hero": {
