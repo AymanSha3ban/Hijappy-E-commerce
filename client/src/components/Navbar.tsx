@@ -97,7 +97,7 @@ export default function Navbar() {
           {/* Logo Container - Made it more compact with a larger image focus */}
       
               <img 
-                src="/logo.png" 
+                src="/weblogo.png" 
                 alt="Louli" 
                 className="w-20 h-20 object-contain transform transition-transform duration-300 group-hover:scale-150" 
               />
