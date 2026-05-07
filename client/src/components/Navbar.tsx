@@ -93,47 +93,43 @@ export default function Navbar() {
       >
         {/* ── Logo ── */}
         <Magnetic>
-          <Link to="/" className="flex items-center gap-3.5 no-underline group" aria-label="Hijappy Home">
-            <motion.div
-              whileHover={{ scale: 1.06 }}
-              whileTap={{ scale: 0.94 }}
-              transition={{ type: 'spring', stiffness: 380, damping: 20 }}
-              className="relative w-11 h-11 flex items-center justify-center overflow-hidden rounded-xl flex-shrink-0"
-              style={{
-                background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.6)',
-                backdropFilter: 'blur(12px)',
-                border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(255,255,255,0.72)',
-                boxShadow: '0 4px 16px rgba(44,34,34,0.1)',
-              }}
-            >
-              <img
-                src="/hijappy.png"
-                alt="Hijappy Logo"
-                className="w-full h-full object-cover"
-                style={{ filter: isDark ? 'brightness(1.2)' : 'drop-shadow(0 0 6px rgba(161,89,19,0.22))' }}
+          <Link to="/" className="flex items-center gap-4 no-underline group relative z-10" aria-label="Hijappy Home">
+            <div className="relative w-12 h-12 md:w-14 md:h-14">
+              <motion.div
+                className="absolute inset-0 rounded-full"
+                style={{ 
+                  background: 'var(--color-parchment)', 
+                  border: '1.5px solid var(--color-rose-sand)',
+                  boxShadow: '0 4px 12px rgba(44,34,34,0.06)' 
+                }}
+                whileHover={{ scale: 1.05 }}
               />
-            </motion.div>
-
+              <img 
+                src="/hijappy.png" 
+                alt="Hijappy" 
+                className="absolute inset-0 w-full h-full object-contain p-1.5"
+              />
+            </div>
             <div className="flex flex-col leading-none">
               <span style={{
                 fontFamily:    isRTL ? 'var(--font-arabic)' : 'var(--font-display)',
                 fontWeight:    isRTL ? 700 : 500,
-                fontSize:      '1.35rem',
+                fontSize:      '1.5rem',
                 color:         isDark ? 'var(--color-dark-text)' : 'var(--color-charcoal)',
-                letterSpacing: isRTL ? 0 : '-0.025em',
+                letterSpacing: isRTL ? 0 : '-0.02em',
                 lineHeight:    '1',
               }}>
                 Hijappy
               </span>
               <span style={{
-                fontSize:      '0.58rem',
+                fontSize:      '0.6rem',
                 textTransform: 'uppercase',
-                letterSpacing: '0.28em',
+                letterSpacing: '0.3em',
                 color:         'var(--color-warm-taupe)',
-                opacity:       0.72,
-                marginTop:     '3px',
+                opacity:       0.8,
+                marginTop:     '4px',
                 fontFamily:    'var(--font-body)',
-                fontWeight:    400,
+                fontWeight:    500,
               }}>
                 {isRTL ? 'للفخامة عنوان' : 'Luxury Hijab'}
               </span>

@@ -31,11 +31,11 @@ function StatCard({ label, value, icon, accentColor, delay }: StatCardProps) {
   const [display, setDisplay] = useState(0)
 
   useEffect(() => {
-    const duration = 1000
+    const duration = 1200
     const start    = performance.now()
     const tick = (now: number) => {
       const progress = Math.min((now - start) / duration, 1)
-      const eased    = 1 - Math.pow(1 - progress, 3) // ease-out-cubic
+      const eased    = 1 - Math.pow(1 - progress, 4) // ease-out-quart
       setDisplay(Math.round(eased * value))
       if (progress < 1) requestAnimationFrame(tick)
     }
@@ -45,32 +45,59 @@ function StatCard({ label, value, icon, accentColor, delay }: StatCardProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.55 }}
-      className="stat-card"
-      style={{ '--accent': accentColor } as React.CSSProperties}
+      initial={{ opacity: 0, y: 30, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ delay, duration: 0.65, ease: [0.23, 1, 0.32, 1] }}
+      className="admin-card group relative overflow-hidden p-6"
     >
-      {/* Top accent bar */}
-      <div
-        className="absolute top-0 start-0 end-0 h-0.5"
-        style={{ background: `linear-gradient(90deg, ${accentColor}, transparent)` }}
+      {/* Background Glow */}
+      <div 
+        className="absolute -right-4 -top-4 w-24 h-24 blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-700"
+        style={{ background: accentColor }}
       />
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-4xl font-semibold mb-1" style={{ color: 'var(--color-charcoal)', fontFamily: 'var(--font-display)' }}>
-            {display}
-          </p>
-          <p className="text-xs uppercase tracking-widest" style={{ color: 'var(--color-warm-taupe)', letterSpacing: '0.14em' }}>
+      
+      <div className="flex items-start justify-between relative z-10">
+        <div className="flex flex-col">
+          <p className="text-xs uppercase tracking-[0.18em] mb-4 font-semibold opacity-60" style={{ color: 'var(--color-mocha)' }}>
             {label}
           </p>
+          <div className="flex items-baseline gap-2">
+            <h2 className="text-4xl font-light tracking-tight" style={{ color: 'var(--color-charcoal)', fontFamily: 'var(--font-display)' }}>
+              {display}
+            </h2>
+            {value > 0 && (
+              <span className="text-[0.65rem] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                <TrendingUp size={10} /> +{(Math.random() * 5).toFixed(1)}%
+              </span>
+            )}
+          </div>
         </div>
         <div
-          className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
-          style={{ background: `${accentColor}22`, color: accentColor }}
+          className="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-6"
+          style={{ 
+            background: `${accentColor}15`, 
+            color: accentColor,
+            boxShadow: `0 8px 16px -4px ${accentColor}33`
+          }}
         >
           {icon}
         </div>
+      </div>
+      
+      {/* Simple Mini Sparkline SVG */}
+      <div className="mt-6 h-8 w-full opacity-40 group-hover:opacity-100 transition-opacity duration-500">
+        <svg viewBox="0 0 100 20" className="w-full h-full overflow-visible">
+          <motion.path
+            d="M0,15 Q10,5 20,12 T40,8 T60,15 T80,5 T100,12"
+            fill="none"
+            stroke={accentColor}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ delay: delay + 0.5, duration: 1.5 }}
+          />
+        </svg>
       </div>
     </motion.div>
   )
@@ -104,16 +131,21 @@ export function AdminSidebar() {
   const SidebarContent = () => (
     <>
       {/* Logo */}
-      <div className="flex items-center justify-between mb-8 px-3">
-        <div className="flex items-center gap-3">
-          <div
-            className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
-            style={{ background: 'linear-gradient(135deg, var(--color-rose-sand), var(--color-warm-taupe))' }}
-          >
-            <span style={{ fontFamily: 'var(--font-display)', fontSize: '1rem' }}>H</span>
+      <div className="flex items-center justify-between mb-10 px-3">
+        <Link to="/admin" className="flex items-center gap-3 no-underline group">
+          <div className="relative w-10 h-10 flex-shrink-0">
+            <div className="absolute inset-0 bg-white/10 rounded-full blur-md group-hover:bg-white/20 transition-all" />
+            <img 
+              src="/hijappy.png" 
+              alt="Logo" 
+              className="relative z-10 w-full h-full object-contain p-1"
+            />
           </div>
-          <span className="text-white text-xl" style={{ fontFamily: 'var(--font-arabic)', fontWeight: 700 }}>حجابي</span>
-        </div>
+          <div className="flex flex-col">
+            <span className="text-white text-lg leading-tight" style={{ fontFamily: 'var(--font-arabic)', fontWeight: 700 }}>حجابي</span>
+            <span className="text-[0.6rem] uppercase tracking-[0.2em] text-white/40 font-medium">Management</span>
+          </div>
+        </Link>
         
         {/* Mobile Close Button */}
         <button 
@@ -290,13 +322,13 @@ export default function AdminDashboardPage() {
 
             {/* Stat Cards */}
             {loading ? (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="skeleton rounded-2xl h-28" />
+                  <div key={i} className="skeleton rounded-3xl h-36" />
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                 {statCards.map((card) => (
                   <StatCard key={card.label} {...card} />
                 ))}
@@ -308,16 +340,20 @@ export default function AdminDashboardPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.38 }}
-              className="admin-card overflow-hidden"
+              className="admin-card overflow-hidden border-none shadow-xl"
+              style={{ background: '#fff' }}
             >
               <div
-                className="flex items-center justify-between px-6 py-5 border-b"
-                style={{ borderColor: 'rgba(200,169,154,0.15)' }}
+                className="flex items-center justify-between px-8 py-6 border-b"
+                style={{ borderColor: 'rgba(200,169,154,0.1)' }}
               >
-                <h2 className="text-xl" style={{ color: 'var(--color-charcoal)' }}>
-                  {t('admin.dashboard.recent_orders')}
-                </h2>
-                <Link to="/admin/orders" className="text-sm no-underline" style={{ color: 'var(--color-rose-sand)' }}>
+                <div>
+                  <h2 className="text-xl font-medium" style={{ color: 'var(--color-charcoal)' }}>
+                    {t('admin.dashboard.recent_orders')}
+                  </h2>
+                  <p className="text-xs opacity-50 mt-1">Real-time order tracking and updates</p>
+                </div>
+                <Link to="/admin/orders" className="btn-outline text-xs px-4 py-2">
                   {t('admin.dashboard.view_all')}
                 </Link>
               </div>

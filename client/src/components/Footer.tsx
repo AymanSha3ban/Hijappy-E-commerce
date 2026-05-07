@@ -116,21 +116,30 @@ export default function Footer() {
             transition={{ duration: 0.65 }}
             className="lg:col-span-1"
           >
-            <div className="flex items-center gap-3 mb-5">
-              <div
-                className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shadow-md flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg, var(--color-nude-pink), var(--color-pastel-rose))' }}
-              >
+            <div className="flex items-center gap-4 mb-6">
+              <div className="relative w-12 h-12">
+                <div 
+                  className="absolute inset-0 rounded-full blur-md opacity-30"
+                  style={{ background: 'var(--color-pastel-rose)' }}
+                />
                 <img 
                   src="/hijappy.png" 
-                  alt="Hijappy Logo" 
-                  className="w-full h-full object-cover"
-                  style={{ filter: 'drop-shadow(0 0 8px rgba(161, 89, 19, 0.3))' }}
+                  alt="Hijappy" 
+                  className="relative z-10 w-full h-full object-contain"
                 />
               </div>
-              <span style={{ fontFamily: 'var(--font-arabic)', fontWeight: 700, fontSize: '1.5rem', color: isDark ? '#fff' : 'var(--color-charcoal)' }}>
-                Hijappy
-              </span>
+              <div className="flex flex-col">
+                <span style={{ 
+                  fontFamily: isRTL ? 'var(--font-arabic)' : 'var(--font-display)', 
+                  fontWeight: 700, 
+                  fontSize: '1.65rem', 
+                  color: isDark ? '#fff' : 'var(--color-charcoal)',
+                  lineHeight: 1
+                }}>
+                  Hijappy
+                </span>
+                <span className="text-[0.6rem] uppercase tracking-[0.25em] opacity-50 mt-1">Luxury Collection</span>
+              </div>
             </div>
             <p
               className="text-sm leading-relaxed mb-6"
