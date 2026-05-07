@@ -3,6 +3,10 @@ import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from
 import { Link } from 'react-router-dom'
 import { ArrowUpRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { Heart } from 'lucide-react'
+import { useToast } from '../contexts/ToastContext'
+import { useTheme } from '../contexts/ThemeContext'
+import { useFavorites } from '../contexts/FavoritesContext'
 
 const API_BASE = (import.meta.env.VITE_API_URL as string ?? '').replace(/\/api\/?$/, '')
 
@@ -53,14 +57,20 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   const cardRef  = useRef<HTMLDivElement>(null)
   const [hovered, setHovered]       = useState(false)
   const [galleryIdx, setGalleryIdx] = useState(0)
+  const [heartPop, setHeartPop]     = useState(false)
   const { i18n } = useTranslation()
+  const { addToast } = useToast()
+  const { isDark } = useTheme()
+  const { toggleFavorite, isFavorite } = useFavorites()
   const isAr = i18n.language === 'ar'
 
-  // 3D Tilt — subtle
+  const isFavorited = isFavorite(product.id)
+
+  // 3D Tilt — refined
   const mouseX  = useMotionValue(0)
   const mouseY  = useMotionValue(0)
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [4, -4]), { stiffness: 200, damping: 28 })
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-4, 4]), { stiffness: 200, damping: 28 })
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [10, -10]), { stiffness: 300, damping: 30 })
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-10, 10]), { stiffness: 300, damping: 30 })
 
   const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const r = cardRef.current?.getBoundingClientRect()
@@ -100,10 +110,15 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
       <Link to={dest} style={{ textDecoration: 'none', display: 'block' }}>
         <motion.article
           id={`product-card-${product.id}`}
+          className="product-card-inner"
           animate={{
             boxShadow: hovered
-              ? 'var(--shadow-product-hover)'
-              : 'var(--shadow-product-rest)',
+              ? (isDark
+                  ? '0 28px 56px rgba(0,0,0,0.55), 0 0 0 1.5px rgba(244,224,225,0.35), 0 8px 24px rgba(244,224,225,0.08)'
+                  : '0 28px 56px rgba(44,34,34,0.14), 0 0 0 1.5px rgba(244,224,225,0.45), 0 8px 32px rgba(244,224,225,0.12)')
+              : (isDark
+                  ? '0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(244,224,225,0.05)'
+                  : 'var(--shadow-product-rest)'),
           }}
           transition={{ duration: 0.38, ease: EASE }}
           style={{
@@ -113,10 +128,10 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
             aspectRatio: '3/4',
             display: 'block',
             cursor: 'pointer',
-            background: 'rgba(255,255,255,0.78)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid rgba(255,255,255,0.65)',
+            background: isDark ? 'rgba(26, 15, 16, 0.92)' : 'rgba(255,255,255,0.78)',
+            backdropFilter: 'blur(32px)',
+            WebkitBackdropFilter: 'blur(32px)',
+            border: isDark ? '1px solid rgba(244,224,225,0.06)' : '1px solid rgba(255,255,255,0.65)',
           }}
         >
           {/* Gallery cross-fade */}
@@ -128,15 +143,56 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
               crossOrigin="anonymous"
               referrerPolicy="no-referrer"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1, scale: hovered ? 1.06 : 1 }}
+              animate={{ opacity: 1, scale: hovered ? 1.15 : 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.6, ease: EASE }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               style={{
                 position: 'absolute', inset: 0,
                 width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+                filter: hovered ? 'brightness(0.9)' : 'brightness(1)',
+                transition: 'filter 0.4s ease',
               }}
             />
           </AnimatePresence>
+
+          {/* Favorite Button */}
+          <motion.button
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              const next = !isFavorited
+              toggleFavorite(product)
+              if (next) {
+                setHeartPop(true)
+                setTimeout(() => setHeartPop(false), 800)
+                addToast(isAr ? 'تمت الإضافة للمفضلة ♥' : 'Added to favorites ♥', 'success')
+              }
+            }}
+            whileHover={{ scale: 1.12 }}
+            whileTap={{ scale: 0.85 }}
+            className={`absolute top-4 ${isAr ? 'left-4' : 'right-4'} z-10 w-9 h-9 rounded-full flex items-center justify-center border-none cursor-pointer glass`}
+            style={{ 
+              background: isFavorited
+                ? 'rgba(239,68,68,0.18)'
+                : (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.55)'),
+              backdropFilter: 'blur(12px)',
+              border: isFavorited ? '1px solid rgba(239,68,68,0.35)' : '1px solid rgba(255,255,255,0.25)',
+              color: isFavorited ? '#ef4444' : 'rgba(255,255,255,0.85)',
+              transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              boxShadow: isFavorited ? '0 0 16px rgba(239,68,68,0.22)' : 'none',
+            }}
+          >
+            <motion.span
+              animate={heartPop ? { scale: [1, 1.4, 0.9, 1.15, 1] } : { scale: 1 }}
+              transition={{ duration: 0.55, ease: 'easeOut' }}
+            >
+              <Heart 
+                size={18} 
+                fill={isFavorited ? '#ef4444' : 'none'} 
+                strokeWidth={2}
+              />
+            </motion.span>
+          </motion.button>
 
           {/* Dot indicators */}
           {hovered && hasMultiple && (
@@ -176,7 +232,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
             transition={{ duration: 0.4 }}
             style={{
               position: 'absolute', inset: 0, borderRadius: '1.75rem',
-              boxShadow: 'inset 0 0 0 1.5px rgba(201,168,76,0.38)',
+              boxShadow: 'inset 0 0 0 1.5px rgba(244,224,225,0.45)',
               pointerEvents: 'none', zIndex: 6,
             }}
           />

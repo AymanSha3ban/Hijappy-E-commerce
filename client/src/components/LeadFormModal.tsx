@@ -62,12 +62,12 @@ export default function LeadFormModal({ isOpen, onClose, product, initialQuantit
     fontSize: '0.875rem', outline: 'none',
     fontFamily: 'inherit',
     transition: 'border-color 0.22s ease, box-shadow 0.22s ease',
-    background: errors[field] ? 'rgba(254,226,226,0.6)' : 'rgba(255,255,255,0.68)',
-    backdropFilter: 'blur(12px)',
-    WebkitBackdropFilter: 'blur(12px)',
+    background: errors[field] ? 'rgba(254,226,226,0.6)' : 'rgba(244, 224, 225, 0.48)',
+    backdropFilter: 'blur(32px)',
+    WebkitBackdropFilter: 'blur(32px)',
     border: errors[field]
       ? '1.5px solid rgba(239,68,68,0.4)'
-      : '1.5px solid rgba(255,255,255,0.7)',
+      : '1.5px solid rgba(244, 224, 225, 0.5)',
     boxShadow: '0 2px 10px rgba(44,34,34,0.04), inset 0 1px 0 rgba(255,255,255,0.72)',
     color: 'var(--color-charcoal)',
   })
@@ -86,9 +86,9 @@ export default function LeadFormModal({ isOpen, onClose, product, initialQuantit
             onClick={handleClose}
             style={{
               position: 'fixed', inset: 0, zIndex: 50,
-              background: 'rgba(28,18,18,0.52)',
-              backdropFilter: 'blur(12px)',
-              WebkitBackdropFilter: 'blur(12px)',
+              background: 'rgba(28,15,16,0.65)',
+              backdropFilter: 'blur(64px)',
+              WebkitBackdropFilter: 'blur(64px)',
             }}
           />
 
@@ -121,10 +121,10 @@ export default function LeadFormModal({ isOpen, onClose, product, initialQuantit
                 maxHeight: '94vh',
                 overflowY: 'auto',
                 /* Glass */
-                background: 'rgba(251,247,244,0.88)',
-                backdropFilter: 'blur(48px) saturate(220%) brightness(1.04)',
-                WebkitBackdropFilter: 'blur(48px) saturate(220%) brightness(1.04)',
-                border: '1px solid rgba(255,255,255,0.72)',
+                background: 'rgba(244,224,225,0.88)',
+                backdropFilter: 'blur(64px) saturate(220%) brightness(1.04)',
+                WebkitBackdropFilter: 'blur(64px) saturate(220%) brightness(1.04)',
+                border: '1px solid rgba(244,224,225,0.2)',
                 borderBottom: 'none',
                 boxShadow: 'var(--shadow-glass-modal)',
               }}
@@ -135,7 +135,7 @@ export default function LeadFormModal({ isOpen, onClose, product, initialQuantit
               {/* Gold gradient accent bar */}
               <div style={{
                 height: 2,
-                background: 'linear-gradient(90deg, var(--color-warm-taupe), var(--color-gold), var(--color-rose-gold), var(--color-rose-sand))',
+                background: 'linear-gradient(90deg, var(--color-nude-pink), var(--color-pastel-rose), var(--color-rose-gold), var(--color-nude-pink))',
                 margin: '0.5rem 1.5rem 0',
                 borderRadius: 9999,
                 opacity: 0.7,
@@ -181,11 +181,11 @@ export default function LeadFormModal({ isOpen, onClose, product, initialQuantit
                         style={{
                           width: 72, height: 72, borderRadius: '50%',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          background: 'linear-gradient(135deg, var(--color-blush), var(--color-blush-mid))',
-                          boxShadow: '0 8px 24px rgba(192,127,110,0.2)',
+                          background: 'linear-gradient(135deg, var(--color-nude-pink), var(--color-pastel-rose))',
+                          boxShadow: '0 8px 24px rgba(244,224,225,0.3)',
                         }}
                       >
-                        <CheckCircle2 size={32} strokeWidth={1.5} style={{ color: 'var(--color-rose-gold)' }} />
+                        <CheckCircle2 size={32} strokeWidth={1.5} style={{ color: 'var(--color-charcoal)' }} />
                       </motion.div>
                       <div>
                         <h3 style={{ fontSize: '1.65rem', color: 'var(--color-charcoal)', marginBottom: '0.65rem', fontFamily: 'var(--font-display)', fontWeight: 400 }}>
@@ -208,10 +208,10 @@ export default function LeadFormModal({ isOpen, onClose, product, initialQuantit
                         <div style={{
                           width: 40, height: 40, borderRadius: '0.85rem', flexShrink: 0,
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          background: 'linear-gradient(135deg, var(--color-blush), var(--color-blush-mid))',
-                          boxShadow: '0 4px 12px rgba(192,127,110,0.15)',
+                          background: 'linear-gradient(135deg, var(--color-nude-pink), var(--color-pastel-rose))',
+                          boxShadow: '0 4px 12px rgba(244,224,225,0.2)',
                         }}>
-                          <ShoppingBag size={17} strokeWidth={1.4} style={{ color: 'var(--color-rose-gold)' }} />
+                          <ShoppingBag size={17} strokeWidth={1.4} style={{ color: 'var(--color-charcoal)' }} />
                         </div>
                         <div>
                           <p style={{ fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.18em', color: 'var(--color-rose-gold)', marginBottom: '0.2rem', fontFamily: 'var(--font-body)' }}>

@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
+import { useTheme } from '../contexts/ThemeContext'
 import { getProduct } from '../services/api'
 import LeadFormModal from '../components/LeadFormModal'
 import Navbar from '../components/Navbar'
@@ -36,6 +37,7 @@ export default function ProductDetailPage() {
   const { id }     = useParams<{ id: string }>()
   const navigate   = useNavigate()
   const { t, i18n } = useTranslation()
+  const { isDark } = useTheme()
 
   const [product, setProduct]       = useState<Product | null>(null)
   const [loading, setLoading]       = useState(true)
@@ -102,7 +104,7 @@ export default function ProductDetailPage() {
   }
 
   if (loading) return (
-    <div className="min-h-screen" style={{ background: 'var(--color-cream)' }}>
+    <div className="min-h-screen" style={{ background: isDark ? 'var(--color-dark-bg)' : 'var(--color-cream)' }}>
       <Navbar />
       <div className="max-w-6xl mx-auto px-5 pt-28 pb-20">
         {/* Back button skeleton */}
@@ -143,7 +145,7 @@ export default function ProductDetailPage() {
     setQuantity((q) => Math.min(product.stock, Math.max(1, q + delta)))
 
   return (
-    <div className="page-wrapper" style={{ background: 'var(--color-cream)', position: 'relative', overflow: 'hidden' }}>
+    <div className={`page-wrapper transition-colors duration-500 ${isDark ? 'dark bg-dark-bg' : 'bg-cream'}`} style={{ background: isDark ? 'var(--color-dark-bg)' : 'var(--color-cream)', position: 'relative', overflow: 'hidden' }}>
       {/* ── Ambient parallax orbs ── */}
       <div className="ambient-orb" style={{
         width: 420, height: 420, top: '5%', left: '-8%',
@@ -246,9 +248,9 @@ export default function ProductDetailPage() {
                 <div style={{
                   position: 'absolute', top: '1rem', left: '1rem',
                   padding: '0.25rem 0.75rem', borderRadius: 9999,
-                  background: 'rgba(201,168,76,0.16)', backdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(201,168,76,0.42)',
-                  color: 'var(--color-gold-light)', fontSize: '0.62rem',
+                  background: 'rgba(244,224,225,0.22)', backdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(244,224,225,0.4)',
+                  color: isDark ? 'var(--color-pastel-rose)' : 'var(--color-rose-sand)', fontSize: '0.62rem',
                   fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
                 }}>
                   {product.category.name}
@@ -268,7 +270,7 @@ export default function ProductDetailPage() {
                     transition={{ duration: SLIDE_INTERVAL / 1000, ease: 'linear' }}
                     style={{
                       height: '100%', transformOrigin: isAr ? 'right' : 'left',
-                      background: 'linear-gradient(90deg, var(--color-gold), var(--color-rose-gold))',
+                      background: 'linear-gradient(90deg, var(--color-pastel-rose), var(--color-nude-pink))',
                     }}
                   />
                 </div>
@@ -325,7 +327,7 @@ export default function ProductDetailPage() {
               )}
               <div style={{ display: 'flex', gap: '0.2rem' }}>
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={13} strokeWidth={1.5} style={{ color: i < 4 ? 'var(--color-gold)' : 'var(--color-blush-mid)', fill: i < 4 ? 'var(--color-gold)' : 'none' }} />
+                  <Star key={i} size={13} strokeWidth={1.5} style={{ color: i < 4 ? 'var(--color-pastel-rose)' : 'var(--color-blush-mid)', fill: i < 4 ? 'var(--color-pastel-rose)' : 'none' }} />
                 ))}
               </div>
             </div>
@@ -334,7 +336,7 @@ export default function ProductDetailPage() {
             <h1 className="text-balance" style={{
               fontSize: 'clamp(1.75rem, 4vw, 2.8rem)',
               fontWeight: isAr ? 700 : 300,
-              color: 'var(--color-charcoal)',
+              color: isDark ? 'var(--color-dark-text)' : 'var(--color-charcoal)',
               lineHeight: 'var(--lh-tight)',
               letterSpacing: isAr ? 0 : 'var(--ls-heading)',
             }}>
@@ -353,7 +355,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Description */}
-            <p className="text-sm" style={{ color: 'var(--color-mocha)', lineHeight: 'var(--lh-relaxed)' }}>
+            <p className="text-sm" style={{ color: isDark ? 'var(--color-dark-muted)' : 'var(--color-mocha)', lineHeight: 'var(--lh-relaxed)' }}>
               {product.description}
             </p>
 
@@ -362,7 +364,7 @@ export default function ProductDetailPage() {
               <div>
                 <p className="text-xs uppercase tracking-widest mb-3" style={{ color: 'var(--color-warm-taupe)', letterSpacing: '0.18em' }}>
                   {t('product.color')} —&nbsp;
-                  <span style={{ color: 'var(--color-charcoal)', textTransform: 'none', letterSpacing: 0 }}>{product.colors[activeColor]}</span>
+                  <span style={{ color: isDark ? 'var(--color-dark-text)' : 'var(--color-charcoal)', textTransform: 'none', letterSpacing: 0 }}>{product.colors[activeColor]}</span>
                 </p>
                 <div className="flex gap-3 flex-wrap">
                   {product.colors.map((color, i) => (
@@ -376,8 +378,8 @@ export default function ProductDetailPage() {
                       title={color}
                       style={{
                         width: 34, height: 34, background: color,
-                        border: activeColor === i ? '2.5px solid var(--color-gold)' : '2px solid transparent',
-                        boxShadow: activeColor === i ? '0 0 0 3px var(--color-cream), 0 0 0 5.5px var(--color-gold), 0 4px 12px rgba(201,168,76,0.3)' : '0 2px 8px rgba(0,0,0,0.12)',
+                        border: activeColor === i ? '2.5px solid var(--color-pastel-rose)' : '2px solid transparent',
+                        boxShadow: activeColor === i ? '0 0 0 3px var(--color-cream), 0 0 0 5.5px var(--color-pastel-rose), 0 4px 12px rgba(244,224,225,0.3)' : '0 2px 8px rgba(0,0,0,0.12)',
                         transition: 'all 0.25s ease',
                       }}
                     />
@@ -413,8 +415,8 @@ export default function ProductDetailPage() {
                 <div style={{
                   display: 'inline-flex', alignItems: 'center',
                   borderRadius: '9999px', overflow: 'hidden',
-                  border: '1.5px solid var(--color-blush-mid)',
-                  background: 'rgba(255,255,255,0.72)',
+                  border: isDark ? '1.5px solid rgba(255,255,255,0.1)' : '1.5px solid var(--color-blush-mid)',
+                  background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.72)',
                   backdropFilter: 'blur(12px)',
                   boxShadow: '0 2px 12px rgba(44,34,34,0.06)',
                 }}>
@@ -422,14 +424,14 @@ export default function ProductDetailPage() {
                     width: 46, height: 46, display: 'flex', alignItems: 'center', justifyContent: 'center',
                     border: 'none', background: 'transparent',
                     cursor: quantity <= 1 ? 'not-allowed' : 'pointer',
-                    color: 'var(--color-charcoal)', opacity: quantity <= 1 ? 0.35 : 1, transition: 'opacity 0.2s',
+                    color: isDark ? 'var(--color-dark-text)' : 'var(--color-charcoal)', opacity: quantity <= 1 ? 0.35 : 1, transition: 'opacity 0.2s',
                   }}>
                     <Minus size={16} strokeWidth={1.5} />
                   </button>
                   <span style={{
                     minWidth: 44, textAlign: 'center', fontFamily: 'var(--font-display)',
-                    fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-charcoal)',
-                    borderInline: '1.5px solid var(--color-blush-mid)', lineHeight: '46px',
+                    fontSize: '1.2rem', fontWeight: 700, color: isDark ? 'var(--color-dark-text)' : 'var(--color-charcoal)',
+                    borderInline: isDark ? '1.5px solid rgba(255,255,255,0.1)' : '1.5px solid var(--color-blush-mid)', lineHeight: '46px',
                   }}>
                     {quantity}
                   </span>
@@ -437,7 +439,7 @@ export default function ProductDetailPage() {
                     width: 46, height: 46, display: 'flex', alignItems: 'center', justifyContent: 'center',
                     border: 'none', background: 'transparent',
                     cursor: quantity >= product.stock ? 'not-allowed' : 'pointer',
-                    color: 'var(--color-charcoal)', opacity: quantity >= product.stock ? 0.35 : 1, transition: 'opacity 0.2s',
+                    color: isDark ? 'var(--color-dark-text)' : 'var(--color-charcoal)', opacity: quantity >= product.stock ? 0.35 : 1, transition: 'opacity 0.2s',
                   }}>
                     <Plus size={16} strokeWidth={1.5} />
                   </button>
@@ -449,7 +451,7 @@ export default function ProductDetailPage() {
             <div className="flex flex-col gap-3 pt-2">
               <motion.button
                 id="buy-now-btn"
-                className="btn-primary w-full text-base py-4"
+                className="btn-primary btn-liquid w-full text-base py-4"
                 onClick={() => setModalOpen(true)}
                 whileTap={{ scale: 0.97 }}
                 disabled={product.stock === 0}
@@ -457,7 +459,7 @@ export default function ProductDetailPage() {
               >
                 {t('product.buy_now')}
               </motion.button>
-              <p className="text-xs text-center flex items-center justify-center gap-1.5" style={{ color: 'var(--color-rose-gold)' }}>
+              <p className="text-xs text-center flex items-center justify-center gap-1.5" style={{ color: 'var(--color-pastel-rose)' }}>
                 <Phone size={12} strokeWidth={1.5} />
                 {t('product.contact_note')}
               </p>
@@ -515,11 +517,11 @@ export default function ProductDetailPage() {
             </p>
             <p style={{
               fontSize: '1.05rem', fontFamily: 'var(--font-display)',
-              fontWeight: 600, color: 'var(--color-charcoal)',
+              fontWeight: 600, color: isDark ? 'var(--color-dark-text)' : 'var(--color-charcoal)',
               lineHeight: 1, marginTop: '0.15rem',
             }}>
               {product.price.toFixed(2)}
-              <span style={{ fontSize: '0.65rem', fontWeight: 400, marginInlineStart: '0.25rem', color: 'var(--color-warm-taupe)' }}>
+              <span style={{ fontSize: '0.65rem', fontWeight: 400, marginInlineStart: '0.25rem', color: isDark ? 'var(--color-dark-muted)' : 'var(--color-warm-taupe)' }}>
                 {isAr ? 'ج.م' : 'EGP'}
               </span>
             </p>

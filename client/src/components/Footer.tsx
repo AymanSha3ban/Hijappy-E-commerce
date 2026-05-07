@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { Mail, ArrowRight, ArrowLeft, Heart } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useTheme } from '../contexts/ThemeContext'
 
 // ── Inline brand SVGs (lucide-react has no brand icons) ───────────────────────
 type IconProps = { size?: number; strokeWidth?: number }
@@ -61,7 +62,7 @@ function NewsletterForm({ isRTL }: { isRTL: boolean }) {
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         className="text-sm"
-        style={{ color: 'var(--color-gold)' }}
+        style={{ color: 'var(--color-pastel-rose)' }}
       >
         {isRTL ? '✓ شكراً! ستصلك أحدث أخبارنا.' : '✓ Thank you! Updates coming your way.'}
       </motion.p>
@@ -88,18 +89,20 @@ function NewsletterForm({ isRTL }: { isRTL: boolean }) {
 // ── Main Footer ───────────────────────────────────────────────────────────────
 export default function Footer() {
   const { t, i18n } = useTranslation()
+  const { isDark } = useTheme()
   const isRTL        = i18n.language === 'ar'
   const ArrowIcon    = isRTL ? ArrowLeft : ArrowRight
 
   return (
     <footer
       style={{
-        background: 'linear-gradient(160deg, var(--color-charcoal) 0%, #1a1010 100%)',
-        color: 'rgba(255,255,255,0.75)',
+        background: isDark ? 'var(--color-dark-bg)' : 'var(--color-nude-pink)',
+        color: isDark ? 'var(--color-dark-text)' : 'var(--color-charcoal)',
+        transition: 'background 0.45s ease, color 0.45s ease',
       }}
     >
-      {/* Gold accent border */}
-      <div style={{ height: '2px', background: 'linear-gradient(90deg, transparent, var(--color-gold), var(--color-rose-sand), transparent)' }} />
+      {/* Pink accent border */}
+      <div style={{ height: '2px', background: 'linear-gradient(90deg, transparent, var(--color-nude-pink), var(--color-pastel-rose), transparent)' }} />
 
       <div className="max-w-7xl mx-auto px-5 pt-16 pb-10">
         {/* ── Main grid ── */}
@@ -116,7 +119,7 @@ export default function Footer() {
             <div className="flex items-center gap-3 mb-5">
               <div
                 className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shadow-md flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg, var(--color-warm-taupe), var(--color-mocha))' }}
+                style={{ background: 'linear-gradient(135deg, var(--color-nude-pink), var(--color-pastel-rose))' }}
               >
                 <img 
                   src="/hijappy.png" 
@@ -125,7 +128,7 @@ export default function Footer() {
                   style={{ filter: 'drop-shadow(0 0 8px rgba(161, 89, 19, 0.3))' }}
                 />
               </div>
-              <span style={{ fontFamily: 'var(--font-arabic)', fontWeight: 700, fontSize: '1.5rem', color: '#fff' }}>
+              <span style={{ fontFamily: 'var(--font-arabic)', fontWeight: 700, fontSize: '1.5rem', color: isDark ? '#fff' : 'var(--color-charcoal)' }}>
                 Hijappy
               </span>
             </div>
@@ -133,7 +136,7 @@ export default function Footer() {
               className="text-sm leading-relaxed mb-6"
               style={{
                 lineHeight: 1.9,
-                color: 'rgba(255,255,255,0.52)',
+                color: isDark ? 'var(--color-dark-muted)' : 'var(--color-mocha)',
                 fontFamily: isRTL ? 'var(--font-arabic)' : 'var(--font-body)',
               }}
             >
@@ -154,15 +157,15 @@ export default function Footer() {
                   transition={{ duration: 0.2 }}
                   className="w-9 h-9 rounded-full flex items-center justify-center no-underline"
                   style={{
-                    background:   'rgba(255,255,255,0.07)',
-                    color:        'rgba(255,255,255,0.62)',
-                    border:       '1px solid rgba(255,255,255,0.1)',
-                    transition:   'background 0.25s, color 0.25s, border-color 0.25s',
+                    background:   isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.5)',
+                    color:        isDark ? 'var(--color-dark-muted)' : 'var(--color-mocha)',
+                    border:       isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(244, 224, 225, 0.6)',
+                    transition:   'all 0.25s ease',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background   = 'rgba(201,168,76,0.15)'
-                    e.currentTarget.style.borderColor  = 'rgba(201,168,76,0.4)'
-                    e.currentTarget.style.color        = 'var(--color-gold)'
+                    e.currentTarget.style.background   = 'rgba(244,224,225,0.15)'
+                    e.currentTarget.style.borderColor  = 'rgba(244,224,225,0.4)'
+                    e.currentTarget.style.color        = 'var(--color-pastel-rose)'
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.background   = 'rgba(255,255,255,0.07)'
@@ -185,7 +188,7 @@ export default function Footer() {
           >
             <h3
               className="text-xs uppercase tracking-widest mb-6"
-              style={{ fontFamily: 'var(--font-body)', fontWeight: 600, color: 'rgba(255,255,255,0.42)', letterSpacing: '0.18em' }}
+              style={{ fontFamily: 'var(--font-body)', fontWeight: 600, color: isDark ? 'var(--color-dark-muted)' : 'var(--color-rose-sand)', letterSpacing: '0.18em' }}
             >
               {isRTL ? 'روابط سريعة' : 'Quick Links'}
             </h3>
@@ -195,12 +198,12 @@ export default function Footer() {
                   <Link
                     to={link.to}
                     className="flex items-center gap-2 text-sm no-underline"
-                    style={{ color: 'rgba(255,255,255,0.58)', transition: 'color 0.2s ease' }}
+                    style={{ color: isDark ? 'var(--color-dark-muted)' : 'var(--color-mocha)', transition: 'color 0.2s ease' }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.color = 'var(--color-gold-light)'
+                      e.currentTarget.style.color = 'var(--color-rose-gold)'
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.color = 'rgba(255,255,255,0.58)'
+                      e.currentTarget.style.color = isDark ? 'var(--color-dark-muted)' : 'var(--color-mocha)'
                     }}
                   >
                     <ArrowIcon size={12} strokeWidth={1.5} style={{ flexShrink: 0 }} />
@@ -220,23 +223,23 @@ export default function Footer() {
           >
             <h3
               className="text-xs uppercase tracking-widest mb-6"
-              style={{ fontFamily: 'var(--font-body)', fontWeight: 600, color: 'rgba(255,255,255,0.42)', letterSpacing: '0.18em' }}
+              style={{ fontFamily: 'var(--font-body)', fontWeight: 600, color: isDark ? 'var(--color-dark-muted)' : 'var(--color-rose-sand)', letterSpacing: '0.18em' }}
             >
               {isRTL ? 'تواصل معنا' : 'Contact'}
             </h3>
             <a
               href="mailto:hello@hijappy.com"
               className="flex items-center gap-2.5 text-sm no-underline mb-4"
-              style={{ color: 'rgba(255,255,255,0.58)', transition: 'color 0.2s ease' }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-gold-light)')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.58)')}
+              style={{ color: isDark ? 'var(--color-dark-muted)' : 'var(--color-mocha)', transition: 'color 0.2s ease' }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-rose-gold)')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = isDark ? 'var(--color-dark-muted)' : 'var(--color-mocha)')}
             >
               <Mail size={14} strokeWidth={1.5} />
               hello@hijappy.com
             </a>
             <p
               className="text-xs leading-relaxed"
-              style={{ color: 'rgba(255,255,255,0.38)', lineHeight: 1.85 }}
+              style={{ color: isDark ? 'rgba(255,255,255,0.38)' : 'var(--color-rose-sand)', lineHeight: 1.85 }}
             >
               {isRTL
                 ? 'نرد على جميع الرسائل خلال 24 ساعة. يمكنك أيضاً التواصل عبر واتساب.'
@@ -253,13 +256,13 @@ export default function Footer() {
           >
             <h3
               className="text-xs uppercase tracking-widest mb-2"
-              style={{ fontFamily: 'var(--font-body)', fontWeight: 600, color: 'rgba(255,255,255,0.42)', letterSpacing: '0.18em' }}
+              style={{ fontFamily: 'var(--font-body)', fontWeight: 600, color: isDark ? 'var(--color-dark-muted)' : 'var(--color-rose-sand)', letterSpacing: '0.18em' }}
             >
               {isRTL ? 'النشرة الإخبارية' : 'Newsletter'}
             </h3>
             <p
               className="text-xs mb-5"
-              style={{ color: 'rgba(255,255,255,0.38)', lineHeight: 1.85 }}
+              style={{ color: isDark ? 'rgba(255,255,255,0.38)' : 'var(--color-mocha)', lineHeight: 1.85 }}
             >
               {isRTL
                 ? 'اشتركي للحصول على أحدث العروض والمجموعات.'
@@ -275,7 +278,7 @@ export default function Footer() {
         {/* ── Bottom bar ── */}
         <div
           className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs"
-          style={{ color: 'rgba(255,255,255,0.32)' }}
+          style={{ color: isDark ? 'rgba(255,255,255,0.32)' : 'var(--color-mocha)' }}
         >
           <p>{t('footer.rights', { year: new Date().getFullYear() })}</p>
           <motion.p

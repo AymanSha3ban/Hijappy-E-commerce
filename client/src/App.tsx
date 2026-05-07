@@ -10,29 +10,51 @@ import AdminProductsPage from './pages/AdminProductsPage'
 import AdminOrdersPage from './pages/AdminOrdersPage'
 import AdminCategoriesPage from './pages/AdminCategoriesPage'
 import ProtectedRoute from './components/ProtectedRoute'
+import FavoritesPage from './pages/FavoritesPage'
+import { FavoritesProvider } from './contexts/FavoritesContext'
 
-const pageVariants = {
-  initial: { opacity: 0, y: 18 },
-  animate: { opacity: 1, y: 0   },
-  exit:    { opacity: 0, y: -12 },
+// ── Stagger children variants ─────────────────────────────────────────────────
+const pageContainerVariants = {
+  initial: { opacity: 0 },
+  animate: {
+    opacity: 1,
+    transition: {
+      when: 'beforeChildren',
+      staggerChildren: 0.06,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -8,
+    transition: { duration: 0.3, ease: [0.4, 0, 1, 1] as const },
+  },
 }
 
-const pageTransition = {
-  duration: 0.38,
-  ease: [0.25, 0.46, 0.45, 0.94] as const,
+const pageContentVariants = {
+  initial: { opacity: 0, y: 28, scale: 0.99 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.65,
+      ease: [0.16, 1, 0.3, 1] as const,
+    },
+  },
 }
 
 function PageWrapper({ children }: { children: React.ReactNode }) {
   return (
     <motion.div
-      variants={pageVariants}
+      variants={pageContainerVariants}
       initial="initial"
       animate="animate"
       exit="exit"
-      transition={pageTransition}
       style={{ width: '100%', minHeight: '100vh' }}
     >
-      {children}
+      <motion.div variants={pageContentVariants}>
+        {children}
+      </motion.div>
     </motion.div>
   )
 }
@@ -41,13 +63,14 @@ export default function App() {
   const location = useLocation()
 
   return (
-    <>
+    <FavoritesProvider>
       <ScrollToTop />
       <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         {/* ── Public Storefront ── */}
         <Route path="/"            element={<PageWrapper><HomePage /></PageWrapper>} />
         <Route path="/shop"         element={<PageWrapper><ShopPage /></PageWrapper>} />
+        <Route path="/favorites"    element={<PageWrapper><FavoritesPage /></PageWrapper>} />
         <Route path="/products/:id" element={<PageWrapper><ProductDetailPage /></PageWrapper>} />
 
         {/* ── Admin Auth ── */}
@@ -94,6 +117,6 @@ export default function App() {
         } />
       </Routes>
     </AnimatePresence>
-    </>
+    </FavoritesProvider>
   )
 }

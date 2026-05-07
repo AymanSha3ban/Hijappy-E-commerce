@@ -6,6 +6,7 @@ import ProductCard, { ProductCardSkeleton } from '../components/ProductCard'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { Search, SlidersHorizontal, Package, X } from 'lucide-react'
+import { useTheme } from '../contexts/ThemeContext'
 
 interface Product  { id: number; name: string; price: number; images: string[]; colors: string[]; category?: { id: number; name: string } }
 interface Category { id: number; name: string; slug: string }
@@ -27,6 +28,7 @@ type SortKey = 'newest' | 'price_asc' | 'price_desc'
 
 export default function ShopPage() {
   const { t, i18n }                         = useTranslation()
+  const { isDark }                          = useTheme()
   const isAr                                = i18n.language === 'ar'
   const [products,   setProducts]           = useState<Product[]>([])
   const [categories, setCategories]         = useState<Category[]>([])
@@ -34,6 +36,7 @@ export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState<number | null>(null) // null = All
   const [search,     setSearch]             = useState('')
   const [sort,       setSort]               = useState<SortKey>('newest')
+  const [searchExpanded, setSearchExpanded] = useState(false)
 
   useEffect(() => {
     document.title = isAr ? 'حجابي | المتجر' : 'Hijappy | Shop'
@@ -64,14 +67,14 @@ export default function ShopPage() {
   const hasFilters   = activeCategory !== null || search.trim() || sort !== 'newest'
 
   return (
-    <div className="page-wrapper" style={{ background: 'var(--color-cream)' }}>
+    <div className="page-wrapper" style={{ background: isDark ? 'var(--color-dark-bg)' : 'var(--color-cream)' }}>
       <Navbar />
 
       {/* ── Page Hero ── */}
       <section
         className="relative flex flex-col items-center justify-center text-center overflow-hidden"
-        style={{ minHeight: '38vh', paddingTop: '90px', paddingBottom: '3rem',
-          background: 'linear-gradient(160deg, var(--color-parchment) 0%, var(--color-blush) 60%, var(--color-cream) 100%)' }}
+        style={{ minHeight: '25vh', paddingTop: '80px', paddingBottom: '2rem',
+          background: 'linear-gradient(160deg, var(--color-nude-pink) 0%, var(--color-pastel-rose) 60%, var(--color-cream) 100%)' }}
       >
         {/* bg blobs */}
         <div className="absolute rounded-full pointer-events-none float-blob"
@@ -79,7 +82,7 @@ export default function ShopPage() {
             background: 'radial-gradient(circle, var(--color-rose-sand), transparent 70%)' }} />
         <div className="absolute rounded-full pointer-events-none float-blob-slow"
           style={{ width: 300, height: 300, bottom: -60, left: -60, opacity: 0.12,
-            background: 'radial-gradient(circle, var(--color-sage), transparent 70%)' }} />
+            background: 'radial-gradient(circle, var(--color-pastel-rose), transparent 70%)' }} />
 
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE }} className="relative z-10">
           <p className="text-xs uppercase tracking-widest mb-3" style={{ color: 'var(--color-rose-sand)', letterSpacing: '0.22em' }}>
@@ -92,88 +95,110 @@ export default function ShopPage() {
       </section>
 
       {/* ── Filters & Search bar ── */}
-      <div className="sticky top-16 z-30" style={{
-        background: 'rgba(251,247,244,0.92)',
-        backdropFilter: 'blur(40px) saturate(200%)',
-        WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-        borderBottom: '1px solid rgba(200,169,154,0.14)',
-        boxShadow: '0 4px 24px rgba(44,34,34,0.04)',
+      <div className="sticky top-[60px] md:top-16 z-30" style={{
+        background: isDark ? 'rgba(26,15,16,0.92)' : 'rgba(244,224,225,0.92)',
+        backdropFilter: 'blur(64px) saturate(200%) brightness(1.04)',
+        WebkitBackdropFilter: 'blur(64px) saturate(200%) brightness(1.04)',
+        borderBottom: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(200,169,154,0.18)',
+        boxShadow: '0 4px 24px rgba(44,34,34,0.06)',
       }}>
-        <div className="max-w-7xl mx-auto px-5 py-3 flex flex-col md:flex-row gap-3 items-start md:items-center">
-          {/* Category pills — 44px touch targets */}
-          <div className="flex flex-wrap gap-2 flex-1">
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              className={`filter-pill touch-target${activeCategory === null ? ' active' : ''}`}
-              onClick={() => setActiveCategory(null)}
-            >
-              {t('shop.filter_all')}
-            </motion.button>
-            {displayCategories.map(cat => (
+        <div className="max-w-7xl mx-auto px-5 py-2.5 md:py-3 flex flex-col gap-2.5">
+          {/* Top Row: Categories + Mobile Search Icon */}
+          <div className="flex items-center gap-2 md:gap-3">
+            {/* Category pills — horizontally scrollable */}
+            <div className="flex flex-nowrap gap-2 flex-1 overflow-x-auto scrollbar-hide py-1 items-center" style={{ WebkitOverflowScrolling: 'touch' }}>
               <motion.button
-                key={cat.id}
                 whileTap={{ scale: 0.95 }}
-                className={`filter-pill touch-target${activeCategory === cat.id ? ' active' : ''}`}
-                onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}
+                className={`filter-pill touch-target whitespace-nowrap flex-shrink-0${activeCategory === null ? ' active' : ''}`}
+                style={activeCategory === null ? { background: 'var(--color-charcoal)', color: 'var(--color-pastel-rose)', borderColor: 'var(--color-charcoal)' } : {}}
+                onClick={() => setActiveCategory(null)}
               >
-                {cat.name}
+                {t('shop.filter_all')}
               </motion.button>
-            ))}
-            {hasFilters && (
-              <motion.button
-                initial={{ opacity: 0, scale: 0.85 }}
-                animate={{ opacity: 1, scale: 1 }}
-                onClick={clearFilters}
-                className="filter-pill"
-                style={{ borderColor: 'var(--color-rose-sand)', color: 'var(--color-dusty-rose)' }}
-              >
-                <X size={12} strokeWidth={2} />
-                {isAr ? 'مسح' : 'Clear'}
-              </motion.button>
-            )}
-          </div>
-
-          {/* Search + Sort */}
-          <div className="flex gap-2 items-center w-full md:w-auto">
-            {/* Search */}
-            <div className="relative flex-1 md:w-52">
-              <Search size={14} strokeWidth={1.5} className="absolute top-1/2 -translate-y-1/2 start-3 pointer-events-none" style={{ color: 'var(--color-rose-sand)' }} />
-              <input
-                type="text"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder={t('shop.search_placeholder')}
-                className="w-full ps-8 pe-3 py-2 rounded-full text-sm outline-none"
-                style={{ background: 'var(--color-parchment)', border: '1.5px solid rgba(200,169,154,0.2)', color: 'var(--color-charcoal)',
-                  fontFamily: 'inherit', transition: 'border-color 0.2s ease' }}
-                onFocus={e => (e.target.style.borderColor = 'var(--color-warm-taupe)')}
-                onBlur={e => (e.target.style.borderColor = 'rgba(200,169,154,0.2)')}
-              />
+              {displayCategories.map(cat => (
+                <motion.button
+                  key={cat.id}
+                  whileTap={{ scale: 0.95 }}
+                  className={`filter-pill touch-target whitespace-nowrap flex-shrink-0${activeCategory === cat.id ? ' active' : ''}`}
+                  style={activeCategory === cat.id ? { background: 'var(--color-charcoal)', color: 'var(--color-pastel-rose)', borderColor: 'var(--color-charcoal)' } : {}}
+                  onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}
+                >
+                  {cat.name}
+                </motion.button>
+              ))}
+              {hasFilters && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.85 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  onClick={clearFilters}
+                  className="filter-pill touch-target whitespace-nowrap flex-shrink-0"
+                  style={{ borderColor: 'var(--color-rose-sand)', color: 'var(--color-dusty-rose)' }}
+                >
+                  <X size={14} strokeWidth={2} style={{ marginInlineEnd: '4px' }} />
+                  {isAr ? 'مسح' : 'Clear'}
+                </motion.button>
+              )}
             </div>
 
-            {/* Sort */}
-            <div className="relative">
-              <SlidersHorizontal size={13} strokeWidth={1.5} className="absolute top-1/2 -translate-y-1/2 start-3 pointer-events-none" style={{ color: 'var(--color-rose-sand)' }} />
-              <select
-                value={sort}
-                onChange={e => setSort(e.target.value as SortKey)}
-                className="ps-8 pe-4 py-2 rounded-full text-sm cursor-pointer appearance-none outline-none"
-                style={{ background: 'var(--color-parchment)', border: '1.5px solid rgba(200,169,154,0.2)',
-                  color: 'var(--color-charcoal)', fontFamily: 'inherit', transition: 'border-color 0.2s ease' }}
-              >
-                <option value="newest">{t('shop.sort_newest')}</option>
-                <option value="price_asc">{t('shop.sort_price_asc')}</option>
-                <option value="price_desc">{t('shop.sort_price_desc')}</option>
-              </select>
-            </div>
+            {/* Mobile Search Toggle */}
+            <motion.button 
+              className="md:hidden flex-shrink-0 touch-target rounded-full flex items-center justify-center transition-colors"
+              style={{ background: searchExpanded ? 'var(--color-charcoal)' : 'rgba(255,255,255,0.6)', border: '1px solid rgba(200,169,154,0.3)', width: 44, height: 44 }}
+              onClick={() => setSearchExpanded(!searchExpanded)}
+              whileTap={{ scale: 0.9 }}
+            >
+              {searchExpanded ? <X size={18} style={{ color: '#fff' }} /> : <Search size={18} style={{ color: 'var(--color-charcoal)' }} />}
+            </motion.button>
           </div>
-        </div>
 
-        {/* Result count */}
-        <div className="max-w-7xl mx-auto px-5 pb-2">
-          <p className="text-xs" style={{ color: 'var(--color-rose-sand)' }}>
-            {isAr ? `${filtered.length} منتج` : `${filtered.length} products`}
-          </p>
+          {/* Search Input (Desktop or Expanded Mobile) + Sort + Count */}
+          <AnimatePresence initial={false}>
+            <motion.div 
+              className={`flex flex-col md:flex-row gap-3 items-start md:items-center justify-between w-full overflow-hidden ${!searchExpanded ? 'hidden md:flex' : 'flex'}`}
+              initial={{ height: searchExpanded ? 'auto' : 0, opacity: searchExpanded ? 1 : 0 }}
+              animate={{ height: 'auto', opacity: 1, marginTop: searchExpanded ? 4 : 0 }}
+              exit={{ height: 0, opacity: 0, marginTop: 0 }}
+            >
+              <div className="flex gap-2 items-center w-full md:w-auto">
+                {/* Search */}
+                <div className="relative flex-1 md:w-52">
+                  <Search size={14} strokeWidth={1.5} className="absolute top-1/2 -translate-y-1/2 start-3 pointer-events-none" style={{ color: 'var(--color-rose-sand)' }} />
+                  <input
+                    type="text"
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    placeholder={t('shop.search_placeholder')}
+                    className="w-full ps-8 pe-3 py-2 rounded-full text-sm outline-none"
+                    style={{ background: 'var(--color-parchment)', border: '1.5px solid rgba(200,169,154,0.2)', color: 'var(--color-charcoal)',
+                      fontFamily: 'inherit', transition: 'border-color 0.2s ease' }}
+                    onFocus={e => (e.target.style.borderColor = 'var(--color-warm-taupe)')}
+                    onBlur={e => (e.target.style.borderColor = 'rgba(200,169,154,0.2)')}
+                  />
+                </div>
+
+                {/* Sort */}
+                <div className="relative">
+                  <SlidersHorizontal size={13} strokeWidth={1.5} className="absolute top-1/2 -translate-y-1/2 start-3 pointer-events-none" style={{ color: 'var(--color-rose-sand)' }} />
+                  <select
+                    value={sort}
+                    onChange={e => setSort(e.target.value as SortKey)}
+                    className="ps-8 pe-4 py-2 rounded-full text-sm cursor-pointer appearance-none outline-none"
+                    style={{ background: 'var(--color-parchment)', border: '1.5px solid rgba(200,169,154,0.2)',
+                      color: 'var(--color-charcoal)', fontFamily: 'inherit', transition: 'border-color 0.2s ease' }}
+                  >
+                    <option value="newest">{t('shop.sort_newest')}</option>
+                    <option value="price_asc">{t('shop.sort_price_asc')}</option>
+                    <option value="price_desc">{t('shop.sort_price_desc')}</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Product Count */}
+              <div className="text-xs font-medium md:px-2 pt-1 md:pt-0 pb-1 md:pb-0" style={{ color: 'var(--color-warm-taupe)', letterSpacing: '0.02em' }}>
+                {isAr ? `${filtered.length} منتج` : `${filtered.length} products`}
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
 

@@ -100,7 +100,7 @@ export default function AdminProductsPage() {
     <div style={{ background: 'var(--color-parchment)', minHeight: '100vh' }}>
       <div className="admin-layout">
         <AdminSidebar />
-        <main className="p-6 md:p-10 overflow-auto">
+        <main className="p-6 lg:p-10 pt-20 lg:pt-10 overflow-auto">
           <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
             <h1 className="text-3xl" style={{ color: 'var(--color-charcoal)' }}>{t('admin.products.title')}</h1>
             <button id="add-product-btn" className="btn-primary" onClick={openAdd} style={{ fontSize: '0.85rem', padding: '0.6rem 1.5rem' }}>

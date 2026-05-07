@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
+import { useTheme } from '../contexts/ThemeContext'
 import { Link } from 'react-router-dom'
 import { getProducts } from '../services/api'
 import ProductCard, { ProductCardSkeleton } from '../components/ProductCard'
@@ -12,6 +13,25 @@ interface Product { id: number; name: string; price: number; images: string[]; c
 
 const EASE = [0.25, 0.46, 0.45, 0.94] as const
 
+// ── Framer Motion stagger container for product grids ─────────────────────────
+const gridContainerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
+    },
+  },
+}
+
+const gridItemVariants = {
+  hidden:  { opacity: 0, y: 36, scale: 0.96 },
+  visible: {
+    opacity: 1, y: 0, scale: 1,
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
+  },
+}
+
 // ── Hero Slides ────────────────────────────────────────────────────────────────
 const HERO_SLIDES = [
   {
@@ -21,7 +41,7 @@ const HERO_SLIDES = [
     title2: { en: 'Thread',              ar: 'خيط' },
     sub:    { en: 'Discover premium hijabs crafted for the modern woman who values elegance.', ar: 'اكتشفي حجابات فاخرة صُممت للمرأة العصرية التي تُقدّر الأناقة.' },
     cta:    { en: 'Shop Now',            ar: 'تسوقي الآن' },
-    accent: 'var(--color-rose-sand)',
+    accent: 'var(--color-pastel-rose)',
   },
   {
     image: 'https://modestpath.com/cdn/shop/products/cotton-voile-hijab-in-cinnamon-stick-brown-color-3_800x.jpg',
@@ -30,7 +50,7 @@ const HERO_SLIDES = [
     title2: { en: 'Elegance',            ar: 'أناقة' },
     sub:    { en: 'From pure silk to breathable cotton — each piece tells a story of luxury.', ar: 'من الحرير إلى القطن — كل قطعة تحكي قصة من الفخامة.' },
     cta:    { en: 'Explore',             ar: 'استكشفي' },
-    accent: 'var(--color-gold)',
+    accent: 'var(--color-nude-pink)',
   },
   {
     image: 'https://cdn.shopify.com/s/files/1/2786/4100/products/glazed-ginger-brown-poly-georgette-hijab-regular-glazed-ginger-brown_2000x.jpg',
@@ -39,7 +59,7 @@ const HERO_SLIDES = [
     title2: { en: 'Beauty',              ar: 'خالد' },
     sub:    { en: 'A curated selection for the woman who wears her values with pride.', ar: 'مجموعة منتقاة للمرأة التي ترتدي قيمها بكل فخر.' },
     cta:    { en: 'View Collection',     ar: 'عرض المجموعة' },
-    accent: 'var(--color-sage)',
+    accent: 'var(--color-blush-mid)',
   },
 ]
 
@@ -91,13 +111,13 @@ function FeaturedCard({ product, index, isRTL }: { product: Product; index: numb
         <div className="absolute bottom-0 left-0 right-0 p-6">
           <h3 className="text-xl mb-1 text-white" style={{ fontFamily: 'var(--font-display)', fontWeight: 300 }}>{product.name}</h3>
           <div className="flex items-center justify-between">
-            <span className="text-lg font-semibold" style={{ color: 'var(--color-gold-light)', fontFamily: 'var(--font-display)' }}>
+            <span className="text-lg font-semibold" style={{ color: 'var(--color-pastel-rose)', fontFamily: 'var(--font-display)' }}>
               {product.price.toFixed(2)} <span className="text-sm font-normal opacity-75">EGP</span>
             </span>
             <motion.span
               className="flex items-center gap-1.5 text-white text-xs uppercase tracking-widest px-4 py-2 rounded-full"
-              style={{ background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.2)', letterSpacing: '0.12em' }}
-              whileHover={{ background: 'rgba(201,168,76,0.35)', borderColor: 'rgba(201,168,76,0.6)' }}
+              style={{ background: 'rgba(244,224,225,0.14)', backdropFilter: 'blur(8px)', border: '1px solid rgba(244,224,225,0.3)', letterSpacing: '0.12em' }}
+              whileHover={{ background: 'rgba(255,209,220,0.35)', borderColor: 'rgba(255,209,220,0.6)' }}
             >
               {isRTL ? 'اشتري' : 'Shop'}
             </motion.span>
@@ -110,16 +130,35 @@ function FeaturedCard({ product, index, isRTL }: { product: Product; index: numb
 
 // ── Section header helper ──────────────────────────────────────────────────────
 function SectionHeader({ label, title }: { label: string; title: string }) {
+  const { isDark } = useTheme()
   return (
     <motion.div
       className="text-center mb-12"
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 32 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.65 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
     >
-      <p className="text-xs uppercase tracking-widest mb-3" style={{ color: 'var(--color-rose-sand)', letterSpacing: '0.22em' }}>{label}</p>
-      <h2 className="text-3xl md:text-4xl" style={{ color: 'var(--color-charcoal)' }}>{title}</h2>
+      <motion.p
+        className="text-xs uppercase tracking-widest mb-3"
+        style={{ color: 'var(--color-rose-sand)', letterSpacing: '0.22em' }}
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.12 }}
+      >
+        {label}
+      </motion.p>
+      <motion.h2
+        className="text-3xl md:text-4xl"
+        style={{ color: isDark ? 'var(--color-dark-text)' : 'var(--color-charcoal)' }}
+        initial={{ opacity: 0, y: 14 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+      >
+        {title}
+      </motion.h2>
       <div className="divider-gold" />
     </motion.div>
   )
@@ -128,6 +167,7 @@ function SectionHeader({ label, title }: { label: string; title: string }) {
 // ── Main Component ─────────────────────────────────────────────────────────────
 export default function HomePage() {
   const { t, i18n }     = useTranslation()
+  const { isDark }      = useTheme()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading]   = useState(true)
   const [slide, setSlide]       = useState(0)
@@ -174,7 +214,7 @@ export default function HomePage() {
   const nextSlide = () => setSlide(s => (s + 1) % HERO_SLIDES.length)
 
   return (
-    <div className="page-wrapper" style={{ background: 'var(--color-cream)' }}>
+    <div className={`page-wrapper transition-colors duration-500 ${isDark ? 'dark bg-dark-bg' : 'bg-cream'}`} style={{ background: isDark ? 'var(--color-dark-bg)' : 'var(--color-cream)' }}>
       <Navbar />
 
       {/* ══════════════════════════════════════════════════════════
@@ -275,11 +315,11 @@ export default function HomePage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.55, ease: EASE }}
               >
-                <Link to="/shop" className="btn-primary">{s.cta[lang]}</Link>
+                <Link to="/shop" className="btn-primary btn-liquid">{s.cta[lang]}</Link>
                 <Link to="/shop"
                   className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full text-sm font-medium"
-                  style={{ background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(8px)',
-                    color: '#fff', border: '1.5px solid rgba(255,255,255,0.3)', textDecoration: 'none',
+                  style={{ background: 'rgba(244,224,225,0.12)', backdropFilter: 'blur(8px)',
+                    color: '#fff', border: '1.5px solid rgba(244,224,225,0.3)', textDecoration: 'none',
                     letterSpacing: '0.05em', transition: 'all 0.25s ease' }}>
                   {isAr ? 'عرض الكل' : 'View All →'}
                 </Link>
@@ -329,7 +369,11 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════════
           FEATURES RIBBON
       ══════════════════════════════════════════════════════════ */}
-      <section style={{ background: 'var(--color-parchment)', borderTop: '1px solid rgba(200,169,154,0.14)', borderBottom: '1px solid rgba(200,169,154,0.14)' }}>
+      <section style={{ 
+        background: isDark ? 'var(--color-dark-surface)' : 'var(--color-nude-pink)', 
+        borderTop: isDark ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(244,224,225,0.3)', 
+        borderBottom: isDark ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(244,224,225,0.3)' 
+      }}>
         <div className="max-w-5xl mx-auto px-5 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
           {FEATURES(t).map(({ icon: Icon, label, desc }, i) => (
             <motion.div
@@ -367,16 +411,26 @@ export default function HomePage() {
             {Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} index={i} />)}
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {newArrivals.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
-          </div>
+          <motion.div
+            className="grid grid-cols-2 md:grid-cols-4 gap-6"
+            variants={gridContainerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-80px' }}
+          >
+            {newArrivals.map((p, i) => (
+              <motion.div key={p.id} variants={gridItemVariants}>
+                <ProductCard product={p} index={i} />
+              </motion.div>
+            ))}
+          </motion.div>
         )}
       </section>
 
       {/* ══════════════════════════════════════════════════════════
           MOST WANTED — dark editorial section
       ══════════════════════════════════════════════════════════ */}
-      <section className="py-20" style={{ background: 'var(--color-charcoal)' }}>
+      <section className="py-20" style={{ background: isDark ? 'var(--color-midnight-plum)' : 'var(--color-charcoal)' }}>
         <div className="max-w-7xl mx-auto px-5">
           {/* Header */}
           <motion.div className="text-center mb-12"
@@ -391,7 +445,7 @@ export default function HomePage() {
           </div>
 
           <div className="text-center">
-            <Link to="/shop" className="btn-primary" style={{ background: 'linear-gradient(135deg, var(--color-gold), var(--color-warm-taupe))' }}>
+            <Link to="/shop" className="btn-primary btn-liquid" style={{ background: 'linear-gradient(135deg, var(--color-gold), var(--color-warm-taupe))' }}>
               {t('home.view_shop')}
             </Link>
           </div>
@@ -401,17 +455,20 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════════
           SHOP ALL CTA BANNER
       ══════════════════════════════════════════════════════════ */}
-      <section className="py-28 relative overflow-hidden" style={{ background: 'var(--color-parchment)' }}>
+      <section className="py-28 relative overflow-hidden" style={{ background: isDark ? 'var(--color-dark-bg)' : 'var(--color-cream)' }}>
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 60% 50%, rgba(200,169,154,0.18) 0%, transparent 70%)' }} />
         <motion.div className="text-center relative z-10 max-w-2xl mx-auto px-6"
-          initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
+          initial={{ opacity: 0, y: 40 }} 
+          whileInView={{ opacity: 1, y: 0 }} 
+          viewport={{ once: true, margin: '-100px' }} 
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}>
           <p className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--color-rose-sand)', letterSpacing: '0.2em' }}>
             {isAr ? 'مجموعتنا الكاملة' : 'Full Collection'}
           </p>
-          <h2 className="text-3xl md:text-5xl mb-5" style={{ color: 'var(--color-charcoal)' }}>
+          <h2 className="text-3xl md:text-5xl mb-5" style={{ color: isDark ? 'var(--color-dark-text)' : 'var(--color-charcoal)' }}>
             {isAr ? 'اكتشفي كل ما لدينا' : 'Explore Everything'}
           </h2>
-          <p className="mb-8 text-base" style={{ color: 'var(--color-mocha)', lineHeight: 1.9 }}>
+          <p className="mb-8 text-base" style={{ color: isDark ? 'var(--color-dark-muted)' : 'var(--color-mocha)', lineHeight: 1.9 }}>
             {isAr ? 'تصفّحي مجموعتنا الكاملة بفلاتر ذكية للعثور على قطعتك المثالية.' : 'Browse our complete collection with smart filters to find your perfect piece.'}
           </p>
 
@@ -433,10 +490,10 @@ export default function HomePage() {
                   to={`/shop?category=${cat.slug}`}
                   className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full text-sm font-medium no-underline"
                   style={{
-                    background: 'rgba(255,255,255,0.72)',
+                    background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.72)',
                     backdropFilter: 'blur(12px)',
-                    border: '1.5px solid rgba(200,169,154,0.35)',
-                    color: 'var(--color-mocha)',
+                    border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(244,224,225,0.4)',
+                    color: isDark ? 'var(--color-dark-text)' : 'var(--color-mocha)',
                     boxShadow: '0 2px 12px rgba(44,34,34,0.06)',
                     transition: 'all 0.25s ease',
                   }}
@@ -459,7 +516,7 @@ export default function HomePage() {
 
           <div className="divider-gold" />
           <motion.div className="mt-8" whileHover={{ scale: 1.03 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
-            <Link to="/shop" className="btn-primary">{isAr ? 'المتجر الكامل' : 'Visit the Shop'}</Link>
+            <Link to="/shop" className="btn-primary btn-liquid">{isAr ? 'المتجر الكامل' : 'Visit the Shop'}</Link>
           </motion.div>
         </motion.div>
       </section>
@@ -467,7 +524,7 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════════
           ABOUT US — Split-screen storytelling
       ══════════════════════════════════════════════════════════ */}
-      <section id="about" className="relative overflow-hidden" style={{ background: 'var(--color-cream)' }}>
+      <section id="about" className="relative overflow-hidden" style={{ background: isDark ? 'var(--color-dark-bg)' : 'var(--color-cream)' }}>
         {/* ambient orb */}
         <div className="ambient-orb" style={{ width: 480, height: 480, top: '10%', right: '-10%', opacity: 0.08,
           background: 'radial-gradient(circle, var(--color-gold), transparent 70%)' }} />

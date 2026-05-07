@@ -6,8 +6,9 @@ import { getDashboardStats } from '../services/api'
 import { useTranslation } from 'react-i18next'
 import {
   LayoutDashboard, Package, Tag, ShoppingBag, Home, LogOut,
-  TrendingUp, Clock, Layers, Inbox,
+  TrendingUp, Clock, Layers, Inbox, Menu, X,
 } from 'lucide-react'
+import { AnimatePresence } from 'framer-motion'
 
 interface Stats {
   totalOrders:      number
@@ -85,8 +86,10 @@ const statusCls: Record<string, string> = {
 export function AdminSidebar() {
   const { admin, logout } = useAuth()
   const navigate          = useNavigate()
-  const { t }             = useTranslation()
+  const { t, i18n }       = useTranslation()
   const location          = window.location.pathname
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const isRTL = i18n.language === 'ar'
 
   const navItems = [
     { label: t('admin.sidebar.dashboard'),  to: '/admin',            icon: <LayoutDashboard size={17} strokeWidth={1.5} /> },
@@ -98,27 +101,28 @@ export function AdminSidebar() {
 
   const isActive = (to: string) => to === '/admin' ? location === '/admin' : location.startsWith(to) && to !== '/'
 
-  return (
-    <aside
-      className="hidden md:flex flex-col py-8 px-4 gap-1"
-      style={{
-        background:  'linear-gradient(180deg, var(--color-charcoal) 0%, #1a1010 100%)',
-        position:    'sticky',
-        top:         0,
-        height:      '100vh',
-        overflowY:   'auto',
-        borderInlineEnd: '1px solid rgba(255,255,255,0.06)',
-      }}
-    >
+  const SidebarContent = () => (
+    <>
       {/* Logo */}
-      <div className="flex items-center gap-3 mb-8 px-3">
-        <div
-          className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
-          style={{ background: 'linear-gradient(135deg, var(--color-rose-sand), var(--color-warm-taupe))' }}
-        >
-          <span style={{ fontFamily: 'var(--font-display)', fontSize: '1rem' }}>H</span>
+      <div className="flex items-center justify-between mb-8 px-3">
+        <div className="flex items-center gap-3">
+          <div
+            className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+            style={{ background: 'linear-gradient(135deg, var(--color-rose-sand), var(--color-warm-taupe))' }}
+          >
+            <span style={{ fontFamily: 'var(--font-display)', fontSize: '1rem' }}>H</span>
+          </div>
+          <span className="text-white text-xl" style={{ fontFamily: 'var(--font-arabic)', fontWeight: 700 }}>حجابي</span>
         </div>
-        <span className="text-white text-xl" style={{ fontFamily: 'var(--font-arabic)', fontWeight: 700 }}>حجابي</span>
+        
+        {/* Mobile Close Button */}
+        <button 
+          onClick={() => setIsMobileOpen(false)}
+          className="lg:hidden w-8 h-8 flex items-center justify-center rounded-full border-none cursor-pointer"
+          style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)' }}
+        >
+          <X size={18} />
+        </button>
       </div>
 
       {/* Nav items */}
@@ -129,6 +133,7 @@ export function AdminSidebar() {
             <Link
               key={item.to}
               to={item.to}
+              onClick={() => setIsMobileOpen(false)}
               className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm no-underline transition-all relative overflow-hidden"
               style={{
                 color:      active ? '#fff' : 'rgba(255,255,255,0.58)',
@@ -169,7 +174,70 @@ export function AdminSidebar() {
           {t('admin.sidebar.logout')}
         </button>
       </div>
-    </aside>
+    </>
+  )
+
+  return (
+    <>
+      {/* ── Mobile Toggle Button ── */}
+      <div className="lg:hidden fixed top-4 start-4 z-40">
+        <button 
+          onClick={() => setIsMobileOpen(true)}
+          className="w-11 h-11 flex items-center justify-center rounded-2xl shadow-lg border-none cursor-pointer"
+          style={{ 
+            background: 'var(--color-charcoal)', 
+            color: '#fff',
+            boxShadow: '0 8px 24px rgba(44,34,34,0.25)' 
+          }}
+        >
+          <Menu size={20} />
+        </button>
+      </div>
+
+      {/* ── Mobile Overlay & Drawer ── */}
+      <AnimatePresence>
+        {isMobileOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileOpen(false)}
+              className="fixed inset-0 z-50 lg:hidden"
+              style={{ background: 'rgba(26,15,16,0.5)', backdropFilter: 'blur(4px)' }}
+            />
+            <motion.aside
+              initial={{ x: isRTL ? '100%' : '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: isRTL ? '100%' : '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-y-0 start-0 z-50 w-72 flex flex-col py-8 px-4 gap-1 lg:hidden shadow-2xl"
+              style={{ 
+                background: 'linear-gradient(180deg, var(--color-charcoal) 0%, #1a1010 100%)',
+                boxShadow: isRTL ? '-20px 0 60px rgba(0,0,0,0.5)' : '20px 0 60px rgba(0,0,0,0.5)'
+              }}
+            >
+              <SidebarContent />
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* ── Desktop Sidebar ── */}
+      <aside
+        className="hidden lg:flex flex-col py-8 px-4 gap-1 w-64 flex-shrink-0"
+        style={{
+          background:  'linear-gradient(180deg, var(--color-charcoal) 0%, #1a1010 100%)',
+          position:    'sticky',
+          top:         0,
+          height:      '100vh',
+          overflowY:   'auto',
+          borderInlineEnd: '1px solid rgba(255,255,255,0.06)',
+        }}
+      >
+        <SidebarContent />
+      </aside>
+    </>
   )
 }
 
@@ -197,7 +265,7 @@ export default function AdminDashboardPage() {
     <div style={{ background: 'var(--color-parchment)', minHeight: '100vh' }}>
       <div className="admin-layout">
         <AdminSidebar />
-        <main className="p-6 md:p-10 overflow-auto">
+        <main className="p-6 lg:p-10 pt-20 lg:pt-10 overflow-auto">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.45 }}>
 
             {/* Header */}

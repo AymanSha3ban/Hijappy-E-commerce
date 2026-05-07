@@ -1,4 +1,12 @@
 {
   "css.validate": false,
-  "scss.validate": false
+  "scss.validate": false,
+  "antigravity.autoRun": false,
+  "antigravity.executeOnSave": false,
+  "antigravity.terminal.autoStart": false,
+  "antigravity.preventCommands": [
+    "npm run dev",
+    "npm start",
+    "vite"
+  ]
 }

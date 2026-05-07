@@ -67,7 +67,7 @@ export default function AdminCategoriesPage() {
     <div style={{ background: 'var(--color-parchment)', minHeight: '100vh' }}>
       <div className="admin-layout">
         <AdminSidebar />
-        <main className="p-6 md:p-10 overflow-auto">
+        <main className="p-6 lg:p-10 pt-20 lg:pt-10 overflow-auto">
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
             <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
               <h1 className="text-3xl" style={{ color: 'var(--color-charcoal)' }}>{t('admin.categories.title')}</h1>

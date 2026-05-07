@@ -57,7 +57,7 @@ export default function AdminOrdersPage() {
     <div style={{ background: 'var(--color-parchment)', minHeight: '100vh' }}>
       <div className="admin-layout">
         <AdminSidebar />
-        <main className="p-6 md:p-10 overflow-auto">
+        <main className="p-6 lg:p-10 pt-20 lg:pt-10 overflow-auto">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
 
             {/* Header */}
