@@ -67,11 +67,10 @@ export default function Navbar() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
       style={{
-         background: scrolled
-          ? (isDark ? 'rgba(26,15,16,0.92)' : '#F3E6E3')
-          : (isDark ? 'rgba(26,15,16,0.55)' : '#F3E6E3'),
-        // backdropFilter:       'blur(64px) saturate(220%) brightness(1.04)',
-        // WebkitBackdropFilter: 'blur(64px) saturate(220%) brightness(1.04)',
+        background: scrolled
+          ? (isDark ? 'rgba(26,15,16,0.92)' : 'rgba(244,224,225,0.82)')
+          : (isDark ? 'rgba(26,15,16,0.55)' : 'rgba(244,224,225,0.42)'),
+        backdropFilter:       'blur(64px) saturate(220%) brightness(1.04)',
         WebkitBackdropFilter: 'blur(64px) saturate(220%) brightness(1.04)',
         borderBottom: scrolled
           ? (isDark ? '1px solid rgba(244,224,225,0.12)' : '1px solid rgba(255,255,255,0.3)')
