@@ -153,18 +153,18 @@ export default function AdminCategoriesPage() {
                   {error && <p className="mb-4 p-3 rounded-xl text-sm" style={{ background: '#FEE2E2', color: '#991B1B' }}>{error}</p>}
                   <form id="category-form" onSubmit={handleSave} className="flex flex-col gap-4">
                     <div>
-                      <label className="block text-xs font-semibold mb-2 uppercase tracking-wider" style={{ color: 'var(--color-warm-taupe)' }}>
+                      <label htmlFor="category-name" className="block text-xs font-semibold mb-2 uppercase tracking-wider" style={{ color: 'var(--color-warm-taupe)' }}>
                         {t('admin.categories.field_name')}
                       </label>
-                      <input ref={nameRef} className={inp} style={inpSt} value={form.name}
+                      <input id="category-name" name="name" ref={nameRef} className={inp} style={inpSt} value={form.name}
                         onChange={(e) => handleNameChange(e.target.value)} required />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold mb-2 uppercase tracking-wider" style={{ color: 'var(--color-warm-taupe)' }}>
+                      <label htmlFor="category-slug" className="block text-xs font-semibold mb-2 uppercase tracking-wider" style={{ color: 'var(--color-warm-taupe)' }}>
                         {t('admin.categories.field_slug')}
                         <span className="ms-2 normal-case font-normal opacity-60">{t('admin.categories.slug_auto')}</span>
                       </label>
-                      <input className={inp} style={{ ...inpSt, fontFamily: 'monospace' }} value={form.slug}
+                      <input id="category-slug" name="slug" className={inp} style={{ ...inpSt, fontFamily: 'monospace' }} value={form.slug}
                         onChange={(e) => { setSlugManual(true); setForm((f) => ({ ...f, slug: e.target.value })) }} required />
                     </div>
                     <div className="flex gap-3 pt-2">

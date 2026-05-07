@@ -73,6 +73,8 @@ function NewsletterForm({ isRTL }: { isRTL: boolean }) {
     <form onSubmit={handleSubmit} className="flex">
       <input
         type="email"
+        id="newsletter-email"
+        name="newsletter-email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder={isRTL ? 'بريدك الإلكتروني' : 'your@email.com'}

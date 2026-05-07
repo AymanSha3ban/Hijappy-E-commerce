@@ -171,46 +171,46 @@ export default function AdminProductsPage() {
                   <form id="product-form" onSubmit={handleSave} className="grid grid-cols-2 gap-4">
                     {/* Name */}
                     <div className="col-span-2">
-                      <label className="block text-xs font-semibold mb-1.5 uppercase tracking-wider" style={{ color: 'var(--color-warm-taupe)' }}>{t('admin.products.field_name')}</label>
-                      <input className={inp} style={inpSt} value={form.name}
+                      <label htmlFor="product-name" className="block text-xs font-semibold mb-1.5 uppercase tracking-wider" style={{ color: 'var(--color-warm-taupe)' }}>{t('admin.products.field_name')}</label>
+                      <input id="product-name" name="name" className={inp} style={inpSt} value={form.name}
                         onChange={(e) => setForm((f) => ({ ...f, name: e.target.value, slug: toSlug(e.target.value) }))} required />
                     </div>
                     {/* Slug */}
                     <div>
-                      <label className="block text-xs font-semibold mb-1.5 uppercase tracking-wider" style={{ color: 'var(--color-warm-taupe)' }}>{t('admin.products.field_slug')}</label>
-                      <input className={inp} style={{ ...inpSt, fontFamily: 'monospace' }} value={form.slug}
+                      <label htmlFor="product-slug" className="block text-xs font-semibold mb-1.5 uppercase tracking-wider" style={{ color: 'var(--color-warm-taupe)' }}>{t('admin.products.field_slug')}</label>
+                      <input id="product-slug" name="slug" className={inp} style={{ ...inpSt, fontFamily: 'monospace' }} value={form.slug}
                         onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))} placeholder={t('admin.products.slug_hint')} required />
                     </div>
                     {/* Category */}
                     <div>
-                      <label className="block text-xs font-semibold mb-1.5 uppercase tracking-wider" style={{ color: 'var(--color-warm-taupe)' }}>{t('admin.products.field_category')}</label>
-                      <select className={inp} style={inpSt} value={form.categoryId} onChange={(e) => setForm((f) => ({ ...f, categoryId: Number(e.target.value) }))} required>
+                      <label htmlFor="product-category" className="block text-xs font-semibold mb-1.5 uppercase tracking-wider" style={{ color: 'var(--color-warm-taupe)' }}>{t('admin.products.field_category')}</label>
+                      <select id="product-category" name="categoryId" className={inp} style={inpSt} value={form.categoryId} onChange={(e) => setForm((f) => ({ ...f, categoryId: Number(e.target.value) }))} required>
                         <option value={0}>{t('admin.products.select_category')}</option>
                         {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                       </select>
                     </div>
                     {/* Price */}
                     <div>
-                      <label className="block text-xs font-semibold mb-1.5 uppercase tracking-wider" style={{ color: 'var(--color-warm-taupe)' }}>{t('admin.products.field_price')}</label>
-                      <input type="number" min={0} step={0.01} className={inp} style={inpSt} value={form.price}
+                      <label htmlFor="product-price" className="block text-xs font-semibold mb-1.5 uppercase tracking-wider" style={{ color: 'var(--color-warm-taupe)' }}>{t('admin.products.field_price')}</label>
+                      <input id="product-price" name="price" type="number" min={0} step={0.01} className={inp} style={inpSt} value={form.price}
                         onChange={(e) => setForm((f) => ({ ...f, price: Number(e.target.value) }))} required />
                     </div>
                     {/* Stock */}
                     <div>
-                      <label className="block text-xs font-semibold mb-1.5 uppercase tracking-wider" style={{ color: 'var(--color-warm-taupe)' }}>{t('admin.products.field_stock')}</label>
-                      <input type="number" min={0} className={inp} style={inpSt} value={form.stock}
+                      <label htmlFor="product-stock" className="block text-xs font-semibold mb-1.5 uppercase tracking-wider" style={{ color: 'var(--color-warm-taupe)' }}>{t('admin.products.field_stock')}</label>
+                      <input id="product-stock" name="stock" type="number" min={0} className={inp} style={inpSt} value={form.stock}
                         onChange={(e) => setForm((f) => ({ ...f, stock: Number(e.target.value) }))} />
                     </div>
                     {/* Description */}
                     <div className="col-span-2">
-                      <label className="block text-xs font-semibold mb-1.5 uppercase tracking-wider" style={{ color: 'var(--color-warm-taupe)' }}>{t('admin.products.field_desc')}</label>
-                      <textarea rows={3} className={inp} style={{ ...inpSt, resize: 'none' }} value={form.description}
+                      <label htmlFor="product-desc" className="block text-xs font-semibold mb-1.5 uppercase tracking-wider" style={{ color: 'var(--color-warm-taupe)' }}>{t('admin.products.field_desc')}</label>
+                      <textarea id="product-desc" name="description" rows={3} className={inp} style={{ ...inpSt, resize: 'none' }} value={form.description}
                         onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} required />
                     </div>
                     {/* Colors */}
                     <div className="col-span-2">
-                      <label className="block text-xs font-semibold mb-1.5 uppercase tracking-wider" style={{ color: 'var(--color-warm-taupe)' }}>{t('admin.products.field_colors')}</label>
-                      <input className={inp} style={inpSt} value={form.colors}
+                      <label htmlFor="product-colors" className="block text-xs font-semibold mb-1.5 uppercase tracking-wider" style={{ color: 'var(--color-warm-taupe)' }}>{t('admin.products.field_colors')}</label>
+                      <input id="product-colors" name="colors" className={inp} style={inpSt} value={form.colors}
                         onChange={(e) => setForm((f) => ({ ...f, colors: e.target.value }))} placeholder="#C8A99A, #D4A5A5, Ivory" />
                     </div>
                     {/* Image Upload */}

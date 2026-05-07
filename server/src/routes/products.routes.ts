@@ -121,17 +121,27 @@ router.post('/', verifyToken, async (req: Request, res: Response): Promise<void>
 // ── PUT /api/products/:id — Protected ────────────────────────────────────────
 router.put('/:id', verifyToken, async (req: Request, res: Response): Promise<void> => {
   const parsed = productSchema.safeParse(req.body);
+
   if (!parsed.success) {
+    // Cleanup any new images if validation fails
+    if (req.body.images && Array.isArray(req.body.images)) {
+      await deleteImagesFromCloudinary(req.body.images);
+    }
     res.status(400).json({ error: parsed.error.flatten() });
     return;
   }
+
   try {
     const product = await prisma.product.update({
       where: { id: Number(req.params.id) },
       data: parsed.data,
     });
     res.json(product);
-  } catch {
+  } catch (error) {
+    // Cleanup images if update fails
+    if (parsed.data.images) {
+      await deleteImagesFromCloudinary(parsed.data.images);
+    }
     res.status(404).json({ error: 'Product not found or slug conflict.' });
   }
 });

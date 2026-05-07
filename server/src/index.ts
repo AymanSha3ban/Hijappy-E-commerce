@@ -34,6 +34,11 @@ app.use((_req, res, next) => {
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   // Tell browsers not to send the Referer header to third-party CDNs
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  // Content Security Policy to allow Cloudinary and Fonts
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://res.cloudinary.com; connect-src 'self' https://res.cloudinary.com http://localhost:3001;"
+  );
   // Disable storage-access for embedded third-party content
   res.setHeader(
     'Permissions-Policy',
