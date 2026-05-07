@@ -42,6 +42,46 @@
   --shadow-navbar:      0 4px 40px rgba(44,34,34,0.06);
   --shadow-glow-gold:   0 0 40px rgba(201,168,76,0.42), 0 6px 24px rgba(107,79,58,0.28);
   --shadow-glow-rose:   0 0 40px rgba(192,127,110,0.38), 0 6px 20px rgba(107,79,58,0.18);
+
+  /* ── 8px Spacing Grid ── */
+  --sp-1:   8px;
+  --sp-2:  16px;
+  --sp-3:  24px;
+  --sp-4:  32px;
+  --sp-5:  40px;
+  --sp-6:  48px;
+  --sp-7:  64px;
+  --sp-8:  80px;
+  --sp-9:  96px;
+  --sp-10: 128px;
+
+  /* ── Typography tokens ── */
+  --lh-tight:   1.12;
+  --lh-snug:    1.35;
+  --lh-body:    1.75;
+  --lh-relaxed: 2.05;
+  --ls-hero:   -0.03em;
+  --ls-heading: -0.02em;
+  --ls-label:   0.22em;
+  --ls-body:    0.005em;
+
+  /* ── Multi-Layer Product Shadows ── */
+  --shadow-product-rest:
+    0 2px 8px  rgba(44,34,34,0.05),
+    0 0 0 1px  rgba(255,255,255,0.52),
+    0 8px 24px rgba(44,34,34,0.04);
+  --shadow-product-hover:
+    0 28px 56px rgba(44,34,34,0.18),
+    0 8px  16px rgba(192,127,110,0.10),
+    0 0 0 1.5px rgba(201,168,76,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.6);
+  --shadow-glass-modal:
+    0 40px 100px rgba(44,34,34,0.26),
+    0 12px  32px rgba(44,34,34,0.10),
+    inset 0 1px  0 rgba(255,255,255,0.82);
+  --shadow-sticky-bar:
+    0 -8px 40px rgba(44,34,34,0.08),
+    0 -1px  0   rgba(200,169,154,0.15);
 }
 
 /* ─────────────────────────────────────────────
@@ -547,3 +587,155 @@ body {
   outline-offset: 2px;
   box-shadow: 0 0 0 5px rgba(201,168,76,0.16);
 }
+
+/* ─────────────────────────────────────────────
+   LUXURY LABEL — small uppercase eyebrow text
+───────────────────────────────────────────── */
+.luxury-label {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--color-rose-sand);
+  font-family: var(--font-body);
+}
+
+/* ─────────────────────────────────────────────
+   TEXT BALANCE — editorial headings
+───────────────────────────────────────────── */
+.text-balance { text-wrap: balance; }
+
+/* ─────────────────────────────────────────────
+   TOUCH TARGET — enforces 44px min
+───────────────────────────────────────────── */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─────────────────────────────────────────────
+   SHAPED SKELETON CARD
+   Matches the 3/4-aspect product card anatomy:
+   image placeholder + two text shims
+───────────────────────────────────────────── */
+.skeleton-card {
+  border-radius: 1.75rem;
+  overflow: hidden;
+  background: rgba(255,255,255,0.55);
+  border: 1px solid rgba(255,255,255,0.55);
+  box-shadow: var(--shadow-product-rest);
+}
+.skeleton-card__image {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: linear-gradient(
+    90deg,
+    var(--color-parchment) 25%,
+    var(--color-blush)     50%,
+    var(--color-parchment) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+.skeleton-card__body {
+  padding: 1rem 1.1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.skeleton-card__line {
+  height: 0.72rem;
+  border-radius: 9999px;
+  background: linear-gradient(
+    90deg,
+    var(--color-parchment) 25%,
+    var(--color-blush)     50%,
+    var(--color-parchment) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+.skeleton-card__line--wide  { width: 72%; }
+.skeleton-card__line--short { width: 38%; }
+
+/* ─────────────────────────────────────────────
+   STICKY MOBILE CART BAR
+───────────────────────────────────────────── */
+.sticky-cart-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  padding: 0.75rem 1.25rem;
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+  background: rgba(251,247,244,0.88);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border-top: 1px solid rgba(200,169,154,0.2);
+  box-shadow: var(--shadow-sticky-bar);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* ─────────────────────────────────────────────
+   CART PULSE — micro-interaction on add
+───────────────────────────────────────────── */
+@keyframes cartPulse {
+  0%   { transform: scale(1);    box-shadow: 0 0 0 0 rgba(192,127,110,0.45); }
+  35%  { transform: scale(1.04); box-shadow: 0 0 0 8px rgba(192,127,110,0);  }
+  70%  { transform: scale(0.98); }
+  100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(192,127,110,0);    }
+}
+.cart-pulse { animation: cartPulse 0.55s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+
+/* ─────────────────────────────────────────────
+   FADE SLIDE UP — page entrance
+───────────────────────────────────────────── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+.fade-slide-up {
+  animation: fadeSlideUp 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* ─────────────────────────────────────────────
+   SECTION SPACING — 8px grid helpers
+───────────────────────────────────────────── */
+.section-py   { padding-top: var(--sp-9);  padding-bottom: var(--sp-9);  }
+.section-py-lg { padding-top: var(--sp-10); padding-bottom: var(--sp-10); }
+.section-gap  { gap: var(--sp-3); }
+.grid-gap     { gap: var(--sp-4); }
+@media (min-width: 768px) {
+  .section-py    { padding-top: var(--sp-10);     padding-bottom: var(--sp-10); }
+  .section-py-lg { padding-top: calc(var(--sp-10) + var(--sp-5)); padding-bottom: calc(var(--sp-10) + var(--sp-5)); }
+  .grid-gap      { gap: var(--sp-5); }
+}
+
+/* ─────────────────────────────────────────────
+   PRODUCT CARD INFO SLIDE-UP PANEL
+───────────────────────────────────────────── */
+.card-info-panel {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 1.3rem 1.2rem 1.2rem;
+  transform: translateY(0);
+  transition: transform 0.38s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ─────────────────────────────────────────────
+   DRAG HANDLE (modal bottom-sheet)
+───────────────────────────────────────────── */
+.drag-handle {
+  width: 36px; height: 4px;
+  border-radius: 9999px;
+  background: rgba(44,34,34,0.14);
+  margin: 0.6rem auto 0;
+  flex-shrink: 0;
+}
+

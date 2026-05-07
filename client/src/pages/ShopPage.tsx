@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { getProducts, getCategories } from '../services/api'
-import ProductCard from '../components/ProductCard'
+import ProductCard, { ProductCardSkeleton } from '../components/ProductCard'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { Search, SlidersHorizontal, Package, X } from 'lucide-react'
@@ -92,13 +92,19 @@ export default function ShopPage() {
       </section>
 
       {/* ── Filters & Search bar ── */}
-      <div className="sticky top-16 z-30" style={{ background: 'rgba(250,246,242,0.96)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(200,169,154,0.15)' }}>
+      <div className="sticky top-16 z-30" style={{
+        background: 'rgba(251,247,244,0.92)',
+        backdropFilter: 'blur(40px) saturate(200%)',
+        WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+        borderBottom: '1px solid rgba(200,169,154,0.14)',
+        boxShadow: '0 4px 24px rgba(44,34,34,0.04)',
+      }}>
         <div className="max-w-7xl mx-auto px-5 py-3 flex flex-col md:flex-row gap-3 items-start md:items-center">
-          {/* Category pills */}
+          {/* Category pills — 44px touch targets */}
           <div className="flex flex-wrap gap-2 flex-1">
             <motion.button
-              whileTap={{ scale: 0.96 }}
-              className={`filter-pill${activeCategory === null ? ' active' : ''}`}
+              whileTap={{ scale: 0.95 }}
+              className={`filter-pill touch-target${activeCategory === null ? ' active' : ''}`}
               onClick={() => setActiveCategory(null)}
             >
               {t('shop.filter_all')}
@@ -106,8 +112,8 @@ export default function ShopPage() {
             {displayCategories.map(cat => (
               <motion.button
                 key={cat.id}
-                whileTap={{ scale: 0.96 }}
-                className={`filter-pill${activeCategory === cat.id ? ' active' : ''}`}
+                whileTap={{ scale: 0.95 }}
+                className={`filter-pill touch-target${activeCategory === cat.id ? ' active' : ''}`}
                 onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}
               >
                 {cat.name}
@@ -175,7 +181,7 @@ export default function ShopPage() {
       <section className="max-w-7xl mx-auto px-5 py-14">
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton rounded-2xl" style={{ aspectRatio: '3/4' }} />)}
+            {Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} index={i} />)}
           </div>
         ) : filtered.length === 0 ? (
           <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}

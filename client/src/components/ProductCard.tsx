@@ -1,14 +1,9 @@
 import { useRef, useState, useEffect } from 'react'
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { ShoppingBag, ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-/** Resolves any image path/URL to a displayable src.
- *  - Full URLs (http/https) → used as-is (Cloudinary, external, direct server URLs)
- *  - Server-relative paths  → prepend API base origin
- *  - Plain filenames        → assumed to live at /uploads/ on the server
- */
 const API_BASE = (import.meta.env.VITE_API_URL as string ?? '').replace(/\/api\/?$/, '')
 
 function resolveImageUrl(url: string): string {
@@ -32,21 +27,40 @@ interface ProductCardProps {
   index?: number
 }
 
-const SPRING = { type: 'spring' as const, stiffness: 280, damping: 22 }
+const SPRING = { type: 'spring' as const, stiffness: 260, damping: 24 }
 const EASE   = [0.25, 0.46, 0.45, 0.94] as const
 
+/* ── Shaped skeleton that mirrors the real card ────────────────────────────── */
+export function ProductCardSkeleton({ index = 0 }: { index?: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: index * 0.06 }}
+      className="skeleton-card"
+    >
+      <div className="skeleton-card__image" />
+      <div className="skeleton-card__body">
+        <div className="skeleton-card__line skeleton-card__line--wide" />
+        <div className="skeleton-card__line skeleton-card__line--short" />
+      </div>
+    </motion.div>
+  )
+}
+
+/* ── Product Card ──────────────────────────────────────────────────────────── */
 export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   const cardRef  = useRef<HTMLDivElement>(null)
-  const [hovered, setHovered]   = useState(false)
+  const [hovered, setHovered]       = useState(false)
   const [galleryIdx, setGalleryIdx] = useState(0)
   const { i18n } = useTranslation()
   const isAr = i18n.language === 'ar'
 
-  // 3D Tilt
+  // 3D Tilt — subtle
   const mouseX  = useMotionValue(0)
   const mouseY  = useMotionValue(0)
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [6, -6]), { stiffness: 240, damping: 28 })
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-6, 6]), { stiffness: 240, damping: 28 })
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [4, -4]), { stiffness: 200, damping: 28 })
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-4, 4]), { stiffness: 200, damping: 28 })
 
   const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const r = cardRef.current?.getBoundingClientRect()
@@ -55,16 +69,16 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
     mouseY.set((e.clientY - r.top)  / r.height - 0.5)
   }
 
-  // Images & auto-gallery
+  // Auto-gallery on hover
   const raw = product.images?.length
     ? product.images
     : ['https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80']
-  const images     = raw.map(resolveImageUrl)
+  const images      = raw.map(resolveImageUrl)
   const hasMultiple = images.length > 1
 
   useEffect(() => {
     if (!hovered || !hasMultiple) { setGalleryIdx(0); return }
-    const t = setInterval(() => setGalleryIdx((p) => (p + 1) % images.length), 2500)
+    const t = setInterval(() => setGalleryIdx((p) => (p + 1) % images.length), 2600)
     return () => clearInterval(t)
   }, [hovered, hasMultiple, images.length])
 
@@ -73,34 +87,35 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   return (
     <motion.div
       ref={cardRef}
-      /* Spring scroll reveal */
-      initial={{ opacity: 0, y: 48, scale: 0.95 }}
+      initial={{ opacity: 0, y: 40, scale: 0.96 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: '-48px' }}
-      transition={{ ...SPRING, delay: index * 0.08 }}
+      viewport={{ once: true, margin: '-56px' }}
+      transition={{ ...SPRING, delay: index * 0.07 }}
       style={{ perspective: 1000, rotateX, rotateY, transformStyle: 'preserve-3d' }}
       onMouseMove={onMouseMove}
       onMouseLeave={() => { mouseX.set(0); mouseY.set(0) }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => { setHovered(false); setGalleryIdx(0) }}
-      className="product-card-glow"
     >
       <Link to={dest} style={{ textDecoration: 'none', display: 'block' }}>
         <motion.article
           id={`product-card-${product.id}`}
           animate={{
             boxShadow: hovered
-              ? '0 32px 72px -8px rgba(44,34,34,0.28), 0 12px 32px rgba(192,127,110,0.16), inset 0 1px 0 rgba(255,255,255,0.5)'
-              : '0 4px 24px -4px rgba(44,34,34,0.08), inset 0 1px 0 rgba(255,255,255,0.4)',
+              ? 'var(--shadow-product-hover)'
+              : 'var(--shadow-product-rest)',
           }}
-          transition={{ duration: 0.42, ease: EASE }}
+          transition={{ duration: 0.38, ease: EASE }}
           style={{
-            position: 'relative', borderRadius: '1.75rem', overflow: 'hidden',
-            aspectRatio: '3/4', display: 'block', cursor: 'pointer',
-            /* Glassmorphism card */
-            background: hovered ? 'rgba(255,255,255,0.82)' : 'rgba(255,255,255,0.72)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
+            position: 'relative',
+            borderRadius: '1.75rem',
+            overflow: 'hidden',
+            aspectRatio: '3/4',
+            display: 'block',
+            cursor: 'pointer',
+            background: 'rgba(255,255,255,0.78)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
             border: '1px solid rgba(255,255,255,0.65)',
           }}
         >
@@ -113,9 +128,9 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
               crossOrigin="anonymous"
               referrerPolicy="no-referrer"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1, scale: hovered ? 1.09 : 1 }}
+              animate={{ opacity: 1, scale: hovered ? 1.06 : 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.65, ease: EASE }}
+              transition={{ duration: 0.6, ease: EASE }}
               style={{
                 position: 'absolute', inset: 0,
                 width: '100%', height: '100%', objectFit: 'cover', display: 'block',
@@ -131,36 +146,37 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
               style={{
                 position: 'absolute', bottom: '5rem', left: '50%',
                 transform: 'translateX(-50%)',
-                display: 'flex', gap: '0.28rem', zIndex: 5,
+                display: 'flex', gap: '0.25rem', zIndex: 5,
               }}
             >
               {images.map((_, i) => (
                 <span key={i} style={{
-                  width: i === galleryIdx ? 18 : 5, height: 5, borderRadius: 9999, flexShrink: 0,
-                  background: i === galleryIdx ? 'var(--color-gold-light)' : 'rgba(255,255,255,0.5)',
-                  transition: 'all 0.32s ease',
+                  width: i === galleryIdx ? 16 : 5, height: 5,
+                  borderRadius: 9999, flexShrink: 0,
+                  background: i === galleryIdx ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.45)',
+                  transition: 'all 0.3s ease',
                 }} />
               ))}
             </motion.div>
           )}
 
-          {/* Gradient scrim */}
+          {/* Gradient scrim — always present, deepens on hover */}
           <motion.div
-            animate={{ opacity: hovered ? 1 : 0.88 }}
-            transition={{ duration: 0.4 }}
+            animate={{ opacity: hovered ? 1 : 0.82 }}
+            transition={{ duration: 0.35 }}
             style={{
               position: 'absolute', inset: 0,
-              background: 'linear-gradient(to top, rgba(30,20,20,0.9) 0%, rgba(30,20,20,0.36) 45%, transparent 75%)',
+              background: 'linear-gradient(to top, rgba(28,18,18,0.88) 0%, rgba(28,18,18,0.28) 42%, transparent 72%)',
             }}
           />
 
-          {/* Rose-gold glow ring on hover */}
+          {/* Gold ring overlay on hover */}
           <motion.div
             animate={{ opacity: hovered ? 1 : 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.4 }}
             style={{
               position: 'absolute', inset: 0, borderRadius: '1.75rem',
-              boxShadow: 'inset 0 0 0 1.5px rgba(201,168,76,0.45)',
+              boxShadow: 'inset 0 0 0 1.5px rgba(201,168,76,0.38)',
               pointerEvents: 'none', zIndex: 6,
             }}
           />
@@ -170,33 +186,35 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
             <motion.div
               initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.06 + 0.2, ...SPRING }}
+              transition={{ delay: index * 0.06 + 0.18, ...SPRING }}
               style={{
-                position: 'absolute', top: '0.9rem',
-                ...(isAr ? { right: '0.9rem' } : { left: '0.9rem' }),
-                padding: '0.22rem 0.75rem', borderRadius: 9999,
-                background: 'rgba(201,168,76,0.15)',
-                backdropFilter: 'blur(16px)',
-                border: '1px solid rgba(201,168,76,0.42)',
-                color: 'var(--color-gold-light)',
-                fontSize: '0.62rem', fontWeight: 600,
-                letterSpacing: '0.1em', textTransform: 'uppercase',
+                position: 'absolute', top: '0.875rem',
+                ...(isAr ? { right: '0.875rem' } : { left: '0.875rem' }),
+                padding: '0.22rem 0.7rem', borderRadius: 9999,
+                background: 'rgba(255,255,255,0.12)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255,255,255,0.22)',
+                color: 'rgba(255,255,255,0.88)',
+                fontSize: '0.6rem', fontWeight: 500,
+                letterSpacing: '0.12em', textTransform: 'uppercase',
+                fontFamily: 'var(--font-body)',
               }}
             >
               {product.category.name}
             </motion.div>
           )}
 
-          {/* Bottom info */}
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '1.3rem 1.2rem 1.15rem' }}>
+          {/* Bottom info panel */}
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '1.25rem 1.15rem 1.15rem' }}>
             <h3 style={{
-              margin: '0 0 0.5rem', color: '#fff',
+              margin: '0 0 0.45rem', color: '#fff',
               fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(1rem, 2.4vw, 1.25rem)',
+              fontSize: 'clamp(0.95rem, 2.2vw, 1.2rem)',
               fontWeight: isAr ? 600 : 300,
               fontStyle: isAr ? 'normal' : 'italic',
-              lineHeight: 1.2,
-              textShadow: '0 1px 8px rgba(0,0,0,0.4)',
+              lineHeight: 'var(--lh-snug)',
+              letterSpacing: isAr ? 0 : '-0.01em',
+              textShadow: '0 1px 6px rgba(0,0,0,0.35)',
             }}>
               {product.name}
             </h3>
@@ -205,33 +223,33 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
               {/* Price */}
               <p style={{
                 margin: 0, fontFamily: 'var(--font-display)',
-                fontWeight: 600, fontSize: '1.1rem',
-                color: 'var(--color-gold-light)', letterSpacing: '-0.01em',
+                fontWeight: 500, fontSize: '1.05rem',
+                color: 'rgba(255,255,255,0.92)', letterSpacing: '-0.01em',
               }}>
                 {product.price.toFixed(2)}
-                <span style={{ fontSize: '0.68rem', fontWeight: 400, opacity: 0.78, marginInlineStart: '0.3rem' }}>
+                <span style={{ fontSize: '0.65rem', fontWeight: 400, opacity: 0.72, marginInlineStart: '0.28rem' }}>
                   {isAr ? 'ج.م' : 'EGP'}
                 </span>
               </p>
 
-              {/* Quick buy chip — rises on hover */}
+              {/* View arrow — appears on hover */}
               <motion.span
-                animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 12, scale: hovered ? 1 : 0.85 }}
-                transition={{ duration: 0.28, ease: EASE }}
+                animate={{ opacity: hovered ? 1 : 0, x: hovered ? 0 : 6 }}
+                transition={{ duration: 0.24, ease: EASE }}
                 style={{
-                  display: 'inline-flex', alignItems: 'center', gap: '0.32rem',
-                  padding: '0.4rem 0.95rem', borderRadius: 9999,
-                  background: 'linear-gradient(135deg, var(--color-warm-taupe), var(--color-rose-gold))',
-                  color: '#fff', fontSize: '0.68rem', fontWeight: 600,
-                  letterSpacing: '0.07em', textTransform: 'uppercase',
+                  display: 'inline-flex', alignItems: 'center', gap: '0.25rem',
+                  padding: '0.35rem 0.8rem', borderRadius: 9999,
+                  background: 'rgba(255,255,255,0.14)',
+                  backdropFilter: 'blur(8px)',
+                  border: '1px solid rgba(255,255,255,0.22)',
+                  color: '#fff', fontSize: '0.65rem', fontWeight: 500,
+                  letterSpacing: '0.06em', textTransform: 'uppercase',
                   whiteSpace: 'nowrap',
-                  boxShadow: '0 4px 18px rgba(192,127,110,0.5)',
                   pointerEvents: 'none',
                 }}
               >
-                <ShoppingBag size={11} strokeWidth={2} />
-                {isAr ? 'اشتر الآن' : 'Quick Buy'}
-                <ArrowUpRight size={10} strokeWidth={2} />
+                {isAr ? 'عرض' : 'View'}
+                <ArrowUpRight size={10} strokeWidth={1.8} />
               </motion.span>
             </div>
           </div>

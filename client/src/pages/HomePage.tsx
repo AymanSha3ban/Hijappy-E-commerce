@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { getProducts } from '../services/api'
-import ProductCard from '../components/ProductCard'
+import ProductCard, { ProductCardSkeleton } from '../components/ProductCard'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { Truck, RefreshCcw, Sparkles, ShieldCheck, ChevronLeft, ChevronRight } from 'lucide-react'
@@ -259,8 +259,8 @@ export default function HomePage() {
 
               {/* Subtitle */}
               <motion.p
-                className="mb-8 text-base leading-relaxed"
-                style={{ color: 'rgba(255,255,255,0.78)', fontWeight: 300, lineHeight: 1.9, maxWidth: '36rem' }}
+                className="mb-8 text-base"
+                style={{ color: 'rgba(255,255,255,0.76)', fontWeight: 300, lineHeight: 'var(--lh-relaxed)', maxWidth: '34rem' }}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.42, ease: EASE }}
@@ -329,28 +329,28 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════════
           FEATURES RIBBON
       ══════════════════════════════════════════════════════════ */}
-      <section style={{ background: 'var(--color-parchment)', borderTop: '1px solid rgba(200,169,154,0.15)', borderBottom: '1px solid rgba(200,169,154,0.15)' }}>
-        <div className="max-w-5xl mx-auto px-5 py-10 grid grid-cols-2 md:grid-cols-4 gap-6">
+      <section style={{ background: 'var(--color-parchment)', borderTop: '1px solid rgba(200,169,154,0.14)', borderBottom: '1px solid rgba(200,169,154,0.14)' }}>
+        <div className="max-w-5xl mx-auto px-5 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
           {FEATURES(t).map(({ icon: Icon, label, desc }, i) => (
             <motion.div
               key={label}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
+              transition={{ duration: 0.5, delay: i * 0.08 }}
               className="flex flex-col items-center gap-3 text-center"
             >
               <motion.div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center"
-                style={{ background: 'var(--color-blush)' }}
-                whileHover={{ scale: 1.12, boxShadow: '0 0 20px rgba(201,168,76,0.28)' }}
-                transition={{ type: 'spring', stiffness: 340, damping: 20 }}
+                className="w-14 h-14 rounded-2xl flex items-center justify-center"
+                style={{ background: 'rgba(255,255,255,0.65)', border: '1px solid rgba(200,169,154,0.18)', boxShadow: '0 2px 12px rgba(44,34,34,0.05)' }}
+                whileHover={{ scale: 1.08, boxShadow: '0 6px 20px rgba(201,168,76,0.18)' }}
+                transition={{ type: 'spring', stiffness: 320, damping: 22 }}
               >
-                <Icon size={20} strokeWidth={1.5} style={{ color: 'var(--color-warm-taupe)' }} />
+                <Icon size={24} strokeWidth={1.4} style={{ color: 'var(--color-warm-taupe)' }} />
               </motion.div>
               <div>
-                <p className="text-sm font-medium mb-0.5" style={{ color: 'var(--color-charcoal)' }}>{label}</p>
-                <p className="text-xs" style={{ color: 'var(--color-rose-sand)' }}>{desc}</p>
+                <p className="text-sm font-medium mb-0.5" style={{ color: 'var(--color-charcoal)', letterSpacing: '0.01em' }}>{label}</p>
+                <p className="text-xs" style={{ color: 'var(--color-rose-sand)', letterSpacing: '0.03em' }}>{desc}</p>
               </div>
             </motion.div>
           ))}

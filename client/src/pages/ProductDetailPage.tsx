@@ -102,13 +102,31 @@ export default function ProductDetailPage() {
   }
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--color-cream)' }}>
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-        className="w-10 h-10 rounded-full border-2"
-        style={{ borderColor: 'var(--color-rose-gold)', borderTopColor: 'transparent' }}
-      />
+    <div className="min-h-screen" style={{ background: 'var(--color-cream)' }}>
+      <Navbar />
+      <div className="max-w-6xl mx-auto px-5 pt-28 pb-20">
+        {/* Back button skeleton */}
+        <div className="skeleton rounded-full mb-10" style={{ width: 80, height: 16 }} />
+        <div className="grid md:grid-cols-2 gap-14 lg:gap-20">
+          {/* Image skeleton */}
+          <div className="skeleton-card">
+            <div className="skeleton-card__image" style={{ aspectRatio: '4/5' }} />
+          </div>
+          {/* Info skeleton */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', paddingTop: '0.5rem' }}>
+            <div className="skeleton rounded-full" style={{ width: 90, height: 12 }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+              <div className="skeleton rounded-xl" style={{ width: '80%', height: 28 }} />
+              <div className="skeleton rounded-xl" style={{ width: '55%', height: 28 }} />
+            </div>
+            <div className="skeleton rounded-full" style={{ width: 110, height: 20 }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+              {[1,2,3].map(i => <div key={i} className="skeleton rounded" style={{ width: '100%', height: 12 }} />)}
+            </div>
+            <div className="skeleton rounded-2xl" style={{ width: '100%', height: 56 }} />
+          </div>
+        </div>
+      </div>
     </div>
   )
   if (!product) return null
@@ -138,9 +156,7 @@ export default function ProductDetailPage() {
 
       <Navbar />
 
-      <div className="max-w-6xl mx-auto px-5 pt-28 pb-20">
-
-        {/* Back button */}
+      <div className="max-w-6xl mx-auto px-5 pt-28 pb-36 md:pb-20">
         <motion.button
           onClick={() => navigate(-1)}
           initial={{ opacity: 0, x: isAr ? 16 : -16 }}
@@ -315,11 +331,12 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Name */}
-            <h1 style={{
-              fontSize: 'clamp(1.85rem, 4vw, 3rem)',
+            <h1 className="text-balance" style={{
+              fontSize: 'clamp(1.75rem, 4vw, 2.8rem)',
               fontWeight: isAr ? 700 : 300,
               color: 'var(--color-charcoal)',
-              lineHeight: 1.18,
+              lineHeight: 'var(--lh-tight)',
+              letterSpacing: isAr ? 0 : 'var(--ls-heading)',
             }}>
               {product.name}
             </h1>
@@ -336,7 +353,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Description */}
-            <p className="text-sm leading-relaxed" style={{ color: 'var(--color-mocha)', lineHeight: 1.95 }}>
+            <p className="text-sm" style={{ color: 'var(--color-mocha)', lineHeight: 'var(--lh-relaxed)' }}>
               {product.description}
             </p>
 
@@ -477,6 +494,49 @@ export default function ProductDetailPage() {
         product={{ id: product.id, name: product.name, price: product.price, stock: product.stock }}
         initialQuantity={quantity}
       />
+
+      {/* ── Sticky Mobile Cart Bar ── */}
+      {product.stock > 0 && (
+        <motion.div
+          className="sticky-cart-bar md:hidden"
+          initial={{ y: 80, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4, type: 'spring', stiffness: 340, damping: 28 }}
+        >
+          {/* Product name + price */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{
+              fontSize: '0.72rem', fontWeight: 500,
+              color: 'var(--color-warm-taupe)',
+              letterSpacing: '0.02em',
+              whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+            }}>
+              {product.name}
+            </p>
+            <p style={{
+              fontSize: '1.05rem', fontFamily: 'var(--font-display)',
+              fontWeight: 600, color: 'var(--color-charcoal)',
+              lineHeight: 1, marginTop: '0.15rem',
+            }}>
+              {product.price.toFixed(2)}
+              <span style={{ fontSize: '0.65rem', fontWeight: 400, marginInlineStart: '0.25rem', color: 'var(--color-warm-taupe)' }}>
+                {isAr ? 'ج.م' : 'EGP'}
+              </span>
+            </p>
+          </div>
+
+          {/* CTA */}
+          <motion.button
+            id="sticky-buy-btn"
+            className="btn-primary"
+            style={{ padding: '0.75rem 1.75rem', fontSize: '0.8rem', whiteSpace: 'nowrap', flexShrink: 0 }}
+            onClick={() => setModalOpen(true)}
+            whileTap={{ scale: 0.96 }}
+          >
+            {t('product.buy_now')}
+          </motion.button>
+        </motion.div>
+      )}
     </div>
   )
 }
