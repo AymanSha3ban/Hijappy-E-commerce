@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Home, ShoppingBag, LayoutDashboard, Globe, Menu, X, Sun, Moon, Heart } from 'lucide-react'
+import { Home, ShoppingBag, LayoutDashboard, Globe, Menu, X, Sun, Moon, Heart, Search } from 'lucide-react'
 import { useTheme } from '../contexts/ThemeContext'
 import { useFavorites } from '../contexts/FavoritesContext'
 import Magnetic from './Magnetic'
@@ -14,6 +14,7 @@ export default function Navbar() {
   const [scrolled, setScrolled]     = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [favOpen, setFavOpen]       = useState(false)
+  const [isMobile, setIsMobile]     = useState(typeof window !== 'undefined' ? window.innerWidth < 768 : false)
   const location                    = useLocation()
   const { t, i18n }                 = useTranslation()
   const { isDark, toggleTheme }     = useTheme()
@@ -24,8 +25,13 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40)
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
     window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    window.addEventListener('resize', handleResize, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleResize)
+    }
   }, [])
 
   // Close favorites on click outside
@@ -67,26 +73,63 @@ export default function Navbar() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
-      style={{
-        background: scrolled
-          ? (isDark ? 'rgba(26,15,16,0.92)' : '#F3E6E3')
-          : (isDark ? 'rgba(26,15,16,0.55)' : '#F3E6E3'),
-        // backdropFilter:       'blur(64px) saturate(220%) brightness(1.04)',
-        // WebkitBackdropFilter: 'blur(64px) saturate(220%) brightness(1.04)',
-        WebkitBackdropFilter: 'blur(64px) saturate(220%) brightness(1.04)',
-        borderBottom: scrolled
-          ? (isDark ? '1px solid rgba(244,224,225,0.12)' : '1px solid rgba(255,255,255,0.3)')
-          : (isDark ? '1px solid rgba(244,224,225,0.08)' : '1px solid rgba(255,255,255,0.2)'),
-        boxShadow: scrolled
-          ? (isDark
-              ? '0 4px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(244,224,225,0.06)'
-              : '0 4px 32px rgba(244,224,225,0.07), inset 0 1px 0 rgba(255,255,255,0.8)')
-          : 'none',
-        transition: 'background 0.45s ease, box-shadow 0.45s ease, border-color 0.45s ease',
-      }}
+      style={
+        isMobile
+          ? {
+              background: '#FBF7F4',
+              borderBottom: '1px solid #D4AF37',
+              transition: 'background 0.3s ease',
+            }
+          : {
+              background: scrolled
+                ? (isDark ? 'rgba(26,15,16,0.92)' : '#F3E6E3')
+                : (isDark ? 'rgba(26,15,16,0.55)' : '#F3E6E3'),
+              WebkitBackdropFilter: 'blur(64px) saturate(220%) brightness(1.04)',
+              borderBottom: scrolled
+                ? (isDark ? '1px solid rgba(244,224,225,0.12)' : '1px solid rgba(255,255,255,0.3)')
+                : (isDark ? '1px solid rgba(244,224,225,0.08)' : '1px solid rgba(255,255,255,0.2)'),
+              boxShadow: scrolled
+                ? (isDark
+                    ? '0 4px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(244,224,225,0.06)'
+                    : '0 4px 32px rgba(244,224,225,0.07), inset 0 1px 0 rgba(255,255,255,0.8)')
+                : 'none',
+              transition: 'background 0.45s ease, box-shadow 0.45s ease, border-color 0.45s ease',
+            }
+      }
     >
+      {/* ── Mobile Nav Wrapper ── */}
+      <div className="md:hidden flex items-center justify-between px-5 py-3 w-full relative">
+        {/* Left: Hamburger */}
+        <button
+          onClick={() => setMobileOpen((v) => !v)}
+          className="text-[#D4AF37] border-none bg-transparent p-0 cursor-pointer flex items-center justify-center"
+          aria-label="Toggle menu"
+        >
+          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+
+        {/* Center: Branding */}
+        <Link to="/" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 no-underline" onClick={() => setMobileOpen(false)}>
+          <img src={Logo} alt="Louli" className="h-9 object-contain" />
+          <div className="flex flex-col justify-center text-left">
+            <span className="text-[#0f172a] font-bold font-serif text-xl leading-none m-0 p-0" style={{ letterSpacing: '-0.02em' }}>Louli</span>
+            <span className="text-[#D4AF37] text-[10px] leading-none mt-1 m-0 p-0 font-medium uppercase tracking-widest">{t('luxuryHijabs')}</span>
+          </div>
+        </Link>
+
+        {/* Right Icons: Search + Cart */}
+        <div className="flex items-center gap-3">
+          <button className="text-[#D4AF37] border-none bg-transparent p-0 cursor-pointer flex items-center justify-center">
+            <Search size={22} />
+          </button>
+          <Link to="/shop" className="text-[#D4AF37] flex items-center justify-center relative">
+            <ShoppingBag size={22} />
+          </Link>
+        </div>
+      </div>
+
       <motion.nav
-        className="max-w-7xl mx-auto px-5 flex items-center justify-between"
+        className="hidden md:flex max-w-7xl mx-auto px-5 items-center justify-between w-full"
         animate={{
           paddingTop:    scrolled ? '0.5rem' : '0.875rem',
           paddingBottom: scrolled ? '0.5rem' : '0.875rem',
@@ -336,88 +379,7 @@ export default function Navbar() {
           </motion.button>
         </div>
 
-        {/* ── Mobile Controls ── */}
-        <div className="md:hidden flex items-center gap-2">
-          <button
-            onClick={toggleLang}
-            className="touch-target flex items-center gap-1 px-3 rounded-full text-xs font-medium border-none cursor-pointer"
-            style={{
-              background: 'rgba(255,255,255,0.55)',
-              color:      'var(--color-mocha)',
-              border:     '1px solid rgba(200,169,154,0.25)',
-            }}
-          >
-            <Globe size={12} strokeWidth={1.4} style={{ color: 'var(--color-rose-gold)' }} />
-            {isRTL ? 'EN' : 'AR'}
-          </button>
-          
-          <motion.button
-            id="mobile-theme-btn"
-            onClick={toggleTheme}
-            whileTap={{ scale: 0.88 }}
-            whileHover={{ scale: 1.08 }}
-            className="touch-target w-10 h-10 rounded-full flex items-center justify-center border-none cursor-pointer"
-            style={{
-              background: isDark
-                ? 'linear-gradient(135deg, rgba(201,168,76,0.22), rgba(201,168,76,0.08))'
-                : 'rgba(255,255,255,0.55)',
-              color:  isDark ? 'var(--color-gold)' : 'var(--color-mocha)',
-              border: isDark ? '1px solid rgba(201,168,76,0.3)' : '1px solid rgba(200,169,154,0.25)',
-              boxShadow: isDark ? '0 0 14px rgba(201,168,76,0.15)' : 'none',
-              transition: 'all 0.3s ease',
-            }}
-          >
-            <AnimatePresence mode="wait">
-              {isDark ? (
-                <motion.span key="sun-m"
-                  initial={{ rotate: -90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: 90, opacity: 0 }}
-                  transition={{ duration: 0.18 }}
-                >
-                  <Sun size={16} strokeWidth={1.8} />
-                </motion.span>
-              ) : (
-                <motion.span key="moon-m"
-                  initial={{ rotate: 90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: -90, opacity: 0 }}
-                  transition={{ duration: 0.18 }}
-                >
-                  <Moon size={16} strokeWidth={1.8} />
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </motion.button>
 
-          
-          <motion.button
-            id="mobile-menu-btn"
-            className="touch-target rounded-full cursor-pointer border-none"
-            style={{
-              background:     'rgba(255,255,255,0.65)',
-              backdropFilter: 'blur(12px)',
-              color:          'var(--color-charcoal)',
-              border:         '1px solid rgba(255,255,255,0.62)',
-              boxShadow:      '0 2px 8px rgba(44,34,34,0.08)',
-            }}
-            onClick={() => setMobileOpen((v) => !v)}
-            whileTap={{ scale: 0.9 }}
-            aria-label="Toggle menu"
-          >
-            <AnimatePresence mode="wait">
-              {mobileOpen ? (
-                <motion.span key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.16 }}>
-                  <X size={17} strokeWidth={1.5} />
-                </motion.span>
-              ) : (
-                <motion.span key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.16 }}>
-                  <Menu size={17} strokeWidth={1.5} />
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </motion.button>
-        </div>
       </motion.nav>
 
       {/* ── Mobile Menu ── */}
@@ -461,6 +423,31 @@ export default function Navbar() {
                   </Link>
                 </motion.div>
               ))}
+
+              {/* Theme & Language Toggles for Mobile Menu */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="flex items-center gap-4 py-5"
+              >
+                <button
+                  onClick={toggleLang}
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-medium border-none cursor-pointer"
+                  style={{ background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(200,169,154,0.1)', color: isDark ? 'var(--color-dark-text)' : 'var(--color-charcoal)' }}
+                >
+                  <Globe size={16} style={{ color: 'var(--color-rose-gold)' }} />
+                  {isRTL ? 'English' : 'العربية'}
+                </button>
+                <button
+                  onClick={toggleTheme}
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-medium border-none cursor-pointer"
+                  style={{ background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(200,169,154,0.1)', color: isDark ? 'var(--color-dark-text)' : 'var(--color-charcoal)' }}
+                >
+                  {isDark ? <Sun size={16} className="text-yellow-500" /> : <Moon size={16} className="text-slate-600" />}
+                  {isDark ? (isRTL ? 'وضع النهار' : 'Light Mode') : (isRTL ? 'الوضع الليلي' : 'Dark Mode')}
+                </button>
+              </motion.div>
             </div>
           </motion.div>
         )}
