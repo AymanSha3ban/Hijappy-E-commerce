@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import ScrollToTop from './components/ScrollToTop'
@@ -61,6 +63,11 @@ function PageWrapper({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const location = useLocation()
+  const { t, i18n } = useTranslation()
+
+  useEffect(() => {
+    document.title = t('title')
+  }, [t, i18n.language])
 
   return (
     <FavoritesProvider>
