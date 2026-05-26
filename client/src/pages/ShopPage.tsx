@@ -26,6 +26,15 @@ const PLACEHOLDERS: Product[] = [
 
 type SortKey = 'newest' | 'price_asc' | 'price_desc'
 
+function normalizeText(text: string): string {
+  if (!text) return ''
+  return text
+    .toLowerCase()
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/ة/g, 'ه')
+    .replace(/ى/g, 'ي')
+}
+
 export default function ShopPage() {
   const { t, i18n }                         = useTranslation()
   const { isDark }                          = useTheme()
@@ -55,8 +64,8 @@ export default function ShopPage() {
     let list = [...displayProducts]
     if (activeCategory !== null) list = list.filter(p => p.category?.id === activeCategory)
     if (search.trim()) {
-      const q = search.toLowerCase()
-      list = list.filter(p => p.name.toLowerCase().includes(q) || p.category?.name.toLowerCase().includes(q))
+      const q = normalizeText(search)
+      list = list.filter(p => normalizeText(p.name).includes(q))
     }
     if (sort === 'price_asc')  list.sort((a, b) => a.price - b.price)
     if (sort === 'price_desc') list.sort((a, b) => b.price - a.price)
