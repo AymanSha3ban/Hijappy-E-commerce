@@ -116,7 +116,7 @@ export default function AdminLoginPage() {
               border: '1px solid rgba(201,168,76,0.25)',
               boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
             }}>
-              <img src="/hijappy.png" alt="Hijappy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src="/weblogo.png" alt="Hijappy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <div>
               <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontSize: '1.35rem', fontWeight: 700, color: '#fff', lineHeight: 1 }}>
@@ -230,7 +230,7 @@ export default function AdminLoginPage() {
               background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(200,169,154,0.3)',
               boxShadow: '0 8px 32px rgba(107,79,58,0.14)',
             }}>
-              <img src="/hijappy.png" alt="Hijappy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src="/weblogo.png" alt="Hijappy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <p style={{ fontSize: '0.62rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--color-rose-gold)' }}>
               {isAr ? 'للفخامة عنوان' : 'Luxury Admin Portal'}
@@ -335,7 +335,7 @@ export default function AdminLoginPage() {
               >
                 {t('admin.login.password')}
               </label>
-              <div style={{ position: 'relative' }}>
+              <div className="relative">
                 <input
                   id="admin-password"
                   type={showPwd ? 'text' : 'password'}
@@ -352,12 +352,8 @@ export default function AdminLoginPage() {
                   type="button"
                   onClick={() => setShowPwd((v) => !v)}
                   whileTap={{ scale: 0.88 }}
-                  style={{
-                    position: 'absolute', top: '50%', transform: 'translateY(-50%)',
-                    [isAr ? 'left' : 'right']: '1rem',
-                    background: 'none', border: 'none', cursor: 'pointer', padding: 4,
-                    color: 'var(--color-rose-sand)', display: 'flex', alignItems: 'center',
-                  }}
+                  className="absolute top-1/2 -translate-y-1/2 end-4 flex items-center justify-center p-1 bg-transparent border-none cursor-pointer"
+                  style={{ color: 'var(--color-rose-sand)' }}
                   aria-label="Toggle password"
                 >
                   <AnimatePresence mode="wait">
