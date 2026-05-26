@@ -116,14 +116,14 @@ export default function AdminLoginPage() {
               border: '1px solid rgba(201,168,76,0.25)',
               boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
             }}>
-              <img src="/weblogo.png" alt="Hijappy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src="/weblogo.png" alt="Louli" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <div>
               <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontSize: '1.35rem', fontWeight: 700, color: '#fff', lineHeight: 1 }}>
-                Hijappy
+                Louli
               </span>
               <span style={{ display: 'block', fontSize: '0.6rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--color-gold)', marginTop: 3 }}>
-                {isAr ? 'للفخامة عنوان' : 'Luxury Hijab'}
+                {isAr ? 'للفخامة عنوان' : 'Louli Hijab'}
               </span>
             </div>
           </Link>
@@ -230,7 +230,7 @@ export default function AdminLoginPage() {
               background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(200,169,154,0.3)',
               boxShadow: '0 8px 32px rgba(107,79,58,0.14)',
             }}>
-              <img src="/weblogo.png" alt="Hijappy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src="/weblogo.png" alt="Louli" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <p style={{ fontSize: '0.62rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--color-rose-gold)' }}>
               {isAr ? 'للفخامة عنوان' : 'Luxury Admin Portal'}
@@ -313,7 +313,7 @@ export default function AdminLoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@hijappy.com"
+                placeholder="admin@louli.com"
                 required
                 autoComplete="email"
                 style={inputStyle('email')}
@@ -443,7 +443,7 @@ export default function AdminLoginPage() {
             transition={{ delay: 0.9 }}
             style={{ textAlign: 'center', marginTop: '2.5rem', fontSize: '0.7rem', color: 'rgba(139,112,85,0.45)', letterSpacing: '0.05em' }}
           >
-            {isAr ? '© 2025 حجابي — جميع الحقوق محفوظة' : '© 2025 Hijappy — All rights reserved'}
+            {isAr ? '© 2025 حجابي — جميع الحقوق محفوظة' : '© 2025 Louli — All rights reserved'}
           </motion.p>
         </motion.div>
       </div>
