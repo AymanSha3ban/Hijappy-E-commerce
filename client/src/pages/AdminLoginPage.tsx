@@ -116,7 +116,7 @@ export default function AdminLoginPage() {
               border: '1px solid rgba(201,168,76,0.25)',
               boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
             }}>
-              <img src="/weblogo.png" alt="Louli" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src="/Louli_logo.png" alt="Louli" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <div>
               <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontSize: '1.35rem', fontWeight: 700, color: '#fff', lineHeight: 1 }}>
@@ -443,7 +443,7 @@ export default function AdminLoginPage() {
             transition={{ delay: 0.9 }}
             style={{ textAlign: 'center', marginTop: '2.5rem', fontSize: '0.7rem', color: 'rgba(139,112,85,0.45)', letterSpacing: '0.05em' }}
           >
-            {isAr ? '© 2025 حجابي — جميع الحقوق محفوظة' : '© 2025 Louli — All rights reserved'}
+            {isAr ? '© 2025 Louli — جميع الحقوق محفوظة' : '© 2025 Louli — All rights reserved'}
           </motion.p>
         </motion.div>
       </div>

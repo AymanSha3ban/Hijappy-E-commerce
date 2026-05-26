@@ -136,13 +136,13 @@ export function AdminSidebar() {
           <div className="relative w-10 h-10 flex-shrink-0">
             <div className="absolute inset-0 bg-white/10 rounded-full blur-md group-hover:bg-white/20 transition-all" />
             <img 
-              src="/icon.png" 
+              src="/Louli_logo.png" 
               alt="Logo" 
               className="relative z-10 w-full h-full object-contain p-1"
             />
           </div>
           <div className="flex flex-col">
-            <span className="text-white text-lg leading-tight" style={{ fontFamily: 'var(--font-arabic)', fontWeight: 700 }}>حجابي</span>
+            <span className="text-white text-lg leading-tight" style={{ fontFamily: 'var(--font-arabic)', fontWeight: 700 }}>Louli</span>
             <span className="text-[0.6rem] uppercase tracking-[0.2em] text-white/40 font-medium">Management</span>
           </div>
         </Link>
