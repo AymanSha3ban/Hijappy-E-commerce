@@ -1,5 +1,6 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { getProducts, getCategories } from '../services/api'
 import ProductCard, { ProductCardSkeleton } from '../components/ProductCard'
@@ -38,6 +39,9 @@ function normalizeText(text: string): string {
 export default function ShopPage() {
   const { t, i18n }                         = useTranslation()
   const { isDark }                          = useTheme()
+  const location                            = useLocation()
+  const navigate                            = useNavigate()
+  const searchInputRef                      = useRef<HTMLInputElement>(null)
   const isAr                                = i18n.language === 'ar'
   const [products,   setProducts]           = useState<Product[]>([])
   const [categories, setCategories]         = useState<Category[]>([])
@@ -54,6 +58,20 @@ export default function ShopPage() {
       .catch(console.error)
       .finally(() => setLoading(false))
   }, [isAr])
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    if (params.get('searchFocus') === 'true') {
+      setSearchExpanded(true)
+      setTimeout(() => {
+        searchInputRef.current?.focus()
+      }, 150)
+      
+      params.delete('searchFocus')
+      const newSearch = params.toString()
+      navigate(`${location.pathname}${newSearch ? `?${newSearch}` : ''}`, { replace: true })
+    }
+  }, [location.search, navigate, location.pathname])
 
   const displayProducts = products.length > 0 ? products : PLACEHOLDERS
   const displayCategories: Category[] = categories.length > 0
@@ -173,6 +191,7 @@ export default function ShopPage() {
                 <div className="relative flex-1 md:w-52">
                   <Search size={14} strokeWidth={1.5} className="absolute top-1/2 -translate-y-1/2 start-3 pointer-events-none" style={{ color: 'var(--color-rose-sand)' }} />
                   <input
+                    ref={searchInputRef}
                     type="text"
                     value={search}
                     onChange={e => setSearch(e.target.value)}

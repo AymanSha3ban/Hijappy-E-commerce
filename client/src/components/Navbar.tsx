@@ -119,9 +119,9 @@ export default function Navbar() {
 
         {/* Right Icons: Search + Cart */}
         <div className="flex items-center gap-3">
-          <button className="text-[#D4AF37] border-none bg-transparent p-0 cursor-pointer flex items-center justify-center">
+          <Link to="/shop?searchFocus=true" className="text-[#D4AF37] border-none bg-transparent p-0 cursor-pointer flex items-center justify-center">
             <Search size={22} />
-          </button>
+          </Link>
           <Link to="/shop" className="text-[#D4AF37] flex items-center justify-center relative">
             <ShoppingBag size={22} />
           </Link>
