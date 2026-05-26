@@ -5,6 +5,7 @@ import { Mail, ArrowRight, ArrowLeft, Heart } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useTheme } from '../contexts/ThemeContext'
 import Magnetic from './Magnetic'
+import Logo from "../assets/Logo.png"
 
 // ── Inline brand SVGs (lucide-react has no brand icons) ───────────────────────
 type IconProps = { size?: number; strokeWidth?: number }
@@ -124,7 +125,7 @@ export default function Footer() {
                         {/* Logo Container - Made it more compact with a larger image focus */}
                     
                             <img 
-                              src="/Louli_logo.png" 
+                              src={Logo}
                               alt="Louli" 
                               className="w-20 h-20 object-contain transform transition-transform duration-300 group-hover:scale-150" 
                             />

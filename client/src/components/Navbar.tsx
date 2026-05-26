@@ -6,6 +6,7 @@ import { Home, ShoppingBag, LayoutDashboard, Globe, Menu, X, Sun, Moon, Heart } 
 import { useTheme } from '../contexts/ThemeContext'
 import { useFavorites } from '../contexts/FavoritesContext'
 import Magnetic from './Magnetic'
+import Logo from "../assets/Logo.png"
 
 const ICON_PROPS = { size: 15, strokeWidth: 1.4 }
 
@@ -98,7 +99,7 @@ export default function Navbar() {
           {/* Logo Container - Made it more compact with a larger image focus */}
       
               <img 
-                src="/Louli_logo.png" 
+                src={Logo}
                 alt="Louli" 
                 className="w-20 h-20 object-contain transform transition-transform duration-300 group-hover:scale-150" 
               />

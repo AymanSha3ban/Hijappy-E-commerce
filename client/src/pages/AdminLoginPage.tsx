@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../contexts/AuthContext'
 import { useTranslation } from 'react-i18next'
 import { Eye, EyeOff, Loader2, ArrowRight, ShieldCheck, Sparkles, ArrowLeft } from 'lucide-react'
+import Logo from "../assets/Logo.png"
 
 const EASE = [0.25, 0.46, 0.45, 0.94] as const
 
@@ -116,7 +117,7 @@ export default function AdminLoginPage() {
               border: '1px solid rgba(201,168,76,0.25)',
               boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
             }}>
-              <img src="/Louli_logo.png" alt="Louli" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={Logo} alt="Louli" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <div>
               <span style={{ display: 'block', fontFamily: 'var(--font-display)', fontSize: '1.35rem', fontWeight: 700, color: '#fff', lineHeight: 1 }}>

@@ -9,6 +9,7 @@ import {
   TrendingUp, Clock, Layers, Inbox, Menu, X,
 } from 'lucide-react'
 import { AnimatePresence } from 'framer-motion'
+import Logo from "../assets/Logo.png"
 
 interface Stats {
   totalOrders:      number
@@ -136,7 +137,7 @@ export function AdminSidebar() {
           <div className="relative w-10 h-10 flex-shrink-0">
             <div className="absolute inset-0 bg-white/10 rounded-full blur-md group-hover:bg-white/20 transition-all" />
             <img 
-              src="/Louli_logo.png" 
+              src={Logo}
               alt="Logo" 
               className="relative z-10 w-full h-full object-contain p-1"
             />
