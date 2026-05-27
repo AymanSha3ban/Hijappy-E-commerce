@@ -29,7 +29,7 @@ export default function AdminCategoriesPage() {
     getCategories().then((r) => setCats(r.data)).catch(() => addToast(t('admin.categories.error_loading', 'Failed to load categories'), 'error')).finally(() => setLoading(false))
   }
 
-  useEffect(() => { document.title = `${t('admin.categories.title')} | Hijappy`; load() }, [t])
+  useEffect(() => { document.title = `${t('admin.categories.title')} | Louli`; load() }, [t])
 
   const openAdd = () => {
     setEditing(null); setForm({ name: '', slug: '' }); setSlugManual(false); setError(''); setModalOpen(true)

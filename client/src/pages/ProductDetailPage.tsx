@@ -53,7 +53,7 @@ export default function ProductDetailPage() {
   useEffect(() => {
     if (!id) return
     getProduct(Number(id))
-      .then((r) => { setProduct(r.data); document.title = `${r.data.name} | حجابي` })
+      .then((r) => { setProduct(r.data); document.title = `${r.data.name} | لولي` })
       .catch(() => navigate('/'))
       .finally(() => setLoading(false))
   }, [id, navigate])

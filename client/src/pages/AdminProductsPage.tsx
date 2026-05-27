@@ -40,7 +40,7 @@ export default function AdminProductsPage() {
       .catch(() => addToast(t('admin.products.error_loading', 'Failed to load data'), 'error')).finally(() => setLoading(false))
   }
 
-  useEffect(() => { document.title = `${t('admin.products.title')} | Hijappy`; load() }, [t])
+  useEffect(() => { document.title = `${t('admin.products.title')} | Louli`; load() }, [t])
 
   const openAdd = () => {
     setEditing(null); setForm(emptyForm); setUploadedUrls([]); setError(''); setModalOpen(true)

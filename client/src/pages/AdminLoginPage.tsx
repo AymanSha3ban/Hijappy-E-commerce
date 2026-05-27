@@ -231,7 +231,7 @@ export default function AdminLoginPage() {
               background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(200,169,154,0.3)',
               boxShadow: '0 8px 32px rgba(107,79,58,0.14)',
             }}>
-              <img src="/weblogo.png" alt="Louli" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={Logo} alt="Louli" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <p style={{ fontSize: '0.62rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--color-rose-gold)' }}>
               {isAr ? 'للفخامة عنوان' : 'Luxury Admin Portal'}

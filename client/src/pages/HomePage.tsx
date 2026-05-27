@@ -202,7 +202,7 @@ export default function HomePage() {
   }, [paused])
 
   useEffect(() => {
-    document.title = isAr ? 'حجابي | حجابات وأوشحة فاخرة' : 'Hijappy | Luxury Hijabs & Scarves'
+    document.title = isAr ? 'لولي | حجابات وأوشحة فاخرة' : 'Louli | Luxury Hijabs & Scarves'
     getProducts().then(r => setProducts(r.data)).catch(() => addToast(t('home.error_loading', 'Failed to load products'), 'error')).finally(() => setLoading(false))
   }, [isAr, t, addToast])
 
@@ -548,7 +548,7 @@ export default function HomePage() {
             }}>
               <img
                 src="https://images.unsplash.com/photo-1614786269829-d24616faf56d?w=800&q=80"
-                alt="Hijappy Brand Story"
+                alt="Louli Brand Story"
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
               />
             </div>

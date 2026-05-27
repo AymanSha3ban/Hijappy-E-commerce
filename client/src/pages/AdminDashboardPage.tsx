@@ -290,7 +290,7 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    document.title = `${t('admin.sidebar.dashboard')} | Hijappy`
+    document.title = `${t('admin.sidebar.dashboard')} | Louli`
     getDashboardStats()
       .then((r) => setStats(r.data))
       .catch(() => addToast(t('admin.dashboard.error_loading', 'Failed to load stats'), 'error'))

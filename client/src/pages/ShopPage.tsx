@@ -54,7 +54,7 @@ export default function ShopPage() {
   const [searchExpanded, setSearchExpanded] = useState(false)
 
   useEffect(() => {
-    document.title = isAr ? 'حجابي | المتجر' : 'Hijappy | Shop'
+    document.title = isAr ? 'لولي | المتجر' : 'Louli | Shop'
     Promise.all([getProducts(), getCategories()])
       .then(([pr, cr]) => { setProducts(pr.data); setCategories(cr.data) })
       .catch(() => addToast(t('shop.error_loading', 'Failed to load products'), 'error'))

@@ -35,7 +35,7 @@ export default function AdminOrdersPage() {
     getOrders(params).then((r) => setOrders(r.data)).catch(() => addToast(t('admin.orders.error_loading', 'Failed to load orders'), 'error')).finally(() => setLoading(false))
   }
 
-  useEffect(() => { document.title = `${t('admin.orders.title')} | Hijappy`; load() }, [t])
+  useEffect(() => { document.title = `${t('admin.orders.title')} | Louli`; load() }, [t])
 
   const handleFilter = (f: string) => { setFilter(f); load(f) }
 
