@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
+import { useToast } from '../contexts/ToastContext'
 import { getProducts, getCategories, createProduct, updateProduct, deleteProduct, uploadImages } from '../services/api'
 import { AdminSidebar } from './AdminDashboardPage'
 
@@ -16,6 +17,7 @@ const emptyForm = { name: '', slug: '', description: '', price: 0, colors: '', s
 
 export default function AdminProductsPage() {
   const { t } = useTranslation()
+  const { addToast } = useToast()
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
@@ -35,7 +37,7 @@ export default function AdminProductsPage() {
     setLoading(true)
     Promise.all([getProducts(), getCategories()])
       .then(([p, c]) => { setProducts(p.data); setCategories(c.data) })
-      .catch(console.error).finally(() => setLoading(false))
+      .catch(() => addToast(t('admin.products.error_loading', 'Failed to load data'), 'error')).finally(() => setLoading(false))
   }
 
   useEffect(() => { document.title = `${t('admin.products.title')} | Hijappy`; load() }, [t])
@@ -70,11 +72,15 @@ export default function AdminProductsPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault(); setError(''); setSaving(true)
-    if (uploadedUrls.length === 0) { setError('Please upload at least one image.'); setSaving(false); return }
+    
+    const finalImages = uploadedUrls.length > 0 
+      ? uploadedUrls 
+      : ['https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=800&q=80']
+
     const payload = {
       ...form,
       price: Number(form.price), stock: Number(form.stock), categoryId: Number(form.categoryId),
-      images: uploadedUrls,
+      images: finalImages,
       colors: String(form.colors).split(',').map((s) => s.trim()).filter(Boolean),
     }
     try {
@@ -89,8 +95,8 @@ export default function AdminProductsPage() {
 
   const handleDelete = async () => {
     if (deleteId == null) return
-    try { await deleteProduct(deleteId); setDeleteId(null); load() }
-    catch { alert('Could not delete — product may have orders.') }
+    try { await deleteProduct(deleteId); setDeleteId(null); load(); addToast(t('admin.products.delete_success', 'Product deleted'), 'success') }
+    catch { addToast(t('admin.products.delete_error', 'Could not delete — product may have orders.'), 'error') }
   }
 
   const inp = 'w-full px-4 py-3 rounded-xl text-sm outline-none border transition-all'

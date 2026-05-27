@@ -1,10 +1,11 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Home, ShoppingBag, LayoutDashboard, Globe, Menu, X, Sun, Moon, Heart, Search } from 'lucide-react'
+import { Home, ShoppingBag, LayoutDashboard, Globe, Menu, X, Sun, Moon, Search } from 'lucide-react'
 import { useTheme } from '../contexts/ThemeContext'
-import { useFavorites } from '../contexts/FavoritesContext'
+
+import { useCart } from '../contexts/CartContext'
 import Magnetic from './Magnetic'
 import Logo from "../assets/Logo.png"
 
@@ -18,7 +19,7 @@ export default function Navbar() {
   const location                    = useLocation()
   const { t, i18n }                 = useTranslation()
   const { isDark, toggleTheme }     = useTheme()
-  const { favorites, toggleFavorite, clearFavorites } = useFavorites()
+  const { cartCount }               = useCart()
   const isRTL                       = i18n.language === 'ar'
 
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -53,19 +54,18 @@ export default function Navbar() {
   const navItems = [
     { label: t('nav.collection'), to: '/',      icon: <Home           {...ICON_PROPS} /> },
     { label: t('nav.shop'),       to: '/shop',  icon: <ShoppingBag    {...ICON_PROPS} /> },
-    { label: t('nav.favorites'),  to: '/favorites', icon: (
+    { label: isRTL ? 'عربة التسوق' : 'Cart',    to: '/cart',  icon: (
       <div className="relative">
-        <Heart {...ICON_PROPS} fill={favorites.length > 0 ? '#ef4444' : 'none'} className={favorites.length > 0 ? 'text-red-500' : ''} />
-        {favorites.length > 0 && (
-          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-red-500 border border-white" />
+        <ShoppingBag {...ICON_PROPS} />
+        {cartCount > 0 && (
+          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-red-500 border border-white flex items-center justify-center text-[8px] text-white font-bold">
+            {cartCount}
+          </span>
         )}
       </div>
-    ), isFavorites: true },
+    ) },
     { label: t('nav.admin'),      to: '/admin', icon: <LayoutDashboard {...ICON_PROPS} /> },
   ]
-
-  const isActive = (to: string) =>
-    to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
 
   return (
     <motion.header
@@ -122,8 +122,13 @@ export default function Navbar() {
           <Link to="/shop?searchFocus=true" className="text-[#D4AF37] border-none bg-transparent p-0 cursor-pointer flex items-center justify-center">
             <Search size={22} />
           </Link>
-          <Link to="/shop" className="text-[#D4AF37] flex items-center justify-center relative">
+          <Link to="/cart" className="text-[#D4AF37] flex items-center justify-center relative">
             <ShoppingBag size={22} />
+            {cartCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center text-[9px] font-bold">
+                {cartCount}
+              </span>
+            )}
           </Link>
         </div>
       </div>
@@ -175,37 +180,34 @@ export default function Navbar() {
         {/* ── Desktop Nav ── */}
         <div className="hidden md:flex items-center gap-7">
           {navItems.map((item) => (
-            <Link
+            <NavLink
               key={item.to}
               to={item.to}
-              className="relative flex items-center gap-1.5 text-sm font-medium no-underline group py-2"
-              style={{
-                color: isActive(item.to) 
-                  ? 'var(--color-pastel-rose)' 
-                  : (isDark ? 'var(--color-dark-text)' : 'var(--color-charcoal)'),
-                letterSpacing: '0.025em',
-                transition:    'color 0.22s ease',
-              }}
+              end={item.to === '/'}
+              className={({ isActive }) => 
+                `relative flex items-center gap-1.5 text-sm no-underline group py-2 transition-all duration-300 ease-in-out ${
+                  isActive 
+                    ? 'text-[#0a1e36] font-bold' 
+                    : isDark ? 'text-gray-400 font-medium hover:text-gray-300' : 'text-[#475569] font-medium hover:text-[#0a1e36]'
+                }`
+              }
+              style={{ letterSpacing: '0.025em' }}
             >
-              <span style={{
-                color: isActive(item.to) 
-                  ? 'var(--color-pastel-rose)' 
-                  : (isDark ? 'var(--color-dark-muted)' : 'var(--color-rose-sand)'),
-                transition: 'color 0.22s ease',
-              }}>
-                {item.icon}
-              </span>
-              {item.label}
-              {/* Underline indicator */}
-              <motion.span
-                className="absolute -bottom-0.5 left-0 right-0 h-px rounded-full"
-                style={{ background: 'linear-gradient(90deg, var(--color-pastel-rose), var(--color-nude-pink))' }}
-                initial={{ scaleX: isActive(item.to) ? 1 : 0, opacity: isActive(item.to) ? 1 : 0 }}
-                animate={{ scaleX: isActive(item.to) ? 1 : 0, opacity: isActive(item.to) ? 1 : 0 }}
-                whileHover={{ scaleX: 1, opacity: 1 }}
-                transition={{ duration: 0.22, ease: 'easeOut' }}
-              />
-            </Link>
+              {({ isActive }) => (
+                <>
+                  <span className={`transition-colors duration-300 ${isActive ? 'text-[#0a1e36]' : 'text-current'}`}>
+                    {item.icon}
+                  </span>
+                  {item.label}
+                  {/* Gold dot indicator */}
+                  <span
+                    className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#D4AF37] transition-all duration-300 ${
+                      isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
+                    }`}
+                  />
+                </>
+              )}
+            </NavLink>
           ))}
 
           {/* Language Toggle */}
@@ -239,104 +241,7 @@ export default function Navbar() {
             </AnimatePresence>
           </motion.button>
 
-          {/* Favorites Desktop */}
-          <div className="relative" ref={dropdownRef}>
-            <motion.button
-              onClick={() => setFavOpen(!favOpen)}
-              whileHover={{ scale: 1.12 }}
-              whileTap={{ scale: 0.9 }}
-              className="w-10 h-10 rounded-full flex items-center justify-center border-none cursor-pointer"
-              style={{
-                background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.55)',
-                border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(200,169,154,0.3)',
-                color: favorites.length > 0 ? '#ef4444' : (isDark ? 'var(--color-dark-text)' : 'var(--color-mocha)'),
-                transition: 'all 0.3s ease'
-              }}
-            >
-              <Heart size={16} strokeWidth={2} fill={favorites.length > 0 ? '#ef4444' : 'none'} />
-              <AnimatePresence>
-                {favorites.length > 0 && (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
-                    className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center font-bold"
-                    style={{ fontSize: '0.65rem', border: '2px solid var(--color-cream)' }}
-                  >
-                    {favorites.length}
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </motion.button>
 
-            {/* Dropdown Panel */}
-            <AnimatePresence>
-              {favOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: 15, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                  className="absolute top-12 end-0 w-80 rounded-2xl overflow-hidden z-50 glass-strong"
-                  style={{ 
-                    boxShadow: isDark ? '0 20px 40px rgba(0,0,0,0.5)' : '0 20px 40px rgba(44,34,34,0.12)',
-                    border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(200,169,154,0.2)'
-                  }}
-                >
-                  <div className="p-4 flex items-center justify-between border-b" style={{ borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(200,169,154,0.1)' }}>
-                    <h3 className="text-sm font-medium m-0">{isRTL ? 'المفضلة' : 'My Favorites'}</h3>
-                    {favorites.length > 0 && (
-                      <button 
-                        onClick={clearFavorites}
-                        className="text-[10px] uppercase tracking-widest opacity-50 hover:opacity-100 transition-opacity border-none bg-none cursor-pointer"
-                      >
-                        {isRTL ? 'مسح الكل' : 'Clear All'}
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="max-h-96 overflow-y-auto scrollbar-hide py-2 px-3">
-                    {favorites.length === 0 ? (
-                      <div className="py-10 text-center opacity-40">
-                        <Heart size={24} strokeWidth={1} className="mb-2 mx-auto" />
-                        <p className="text-xs">{isRTL ? 'القائمة فارغة' : 'Your list is empty'}</p>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col gap-2">
-                        {favorites.map((item) => (
-                          <div key={item.id} className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors group">
-                            <img src={item.images[0]} alt="" className="w-12 h-16 object-cover rounded-lg" />
-                            <div className="flex-1 min-w-0">
-                              <h4 className="text-xs font-medium truncate mb-0.5">{item.name}</h4>
-                              <p className="text-[10px] opacity-60 m-0">{item.price} EGP</p>
-                            </div>
-                            <button 
-                              onClick={() => toggleFavorite(item)}
-                              className="w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-red-500/10 transition-all border-none cursor-pointer"
-                            >
-                              <X size={12} className="text-red-500" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {favorites.length > 0 && (
-                    <div className="p-3 border-t" style={{ borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(200,169,154,0.1)' }}>
-                      <Link 
-                        to="/favorites" 
-                        onClick={() => setFavOpen(false)}
-                        className="btn-primary py-2.5 text-xs w-full flex items-center justify-center gap-2"
-                      >
-                        {isRTL ? 'عرض الكل' : 'View All'}
-                      </Link>
-                    </div>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
 
           {/* Desktop Dark Mode Toggle — premium pill */}
           <motion.button
@@ -406,21 +311,31 @@ export default function Navbar() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05, type: 'spring', stiffness: 320, damping: 26 }}
                 >
-                  <Link
+                  <NavLink
                     to={item.to}
-                    className="flex items-center gap-3 py-4 text-sm no-underline border-b"
+                    end={item.to === '/'}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 py-4 text-sm no-underline border-b transition-all duration-300 ease-in-out ${
+                        isActive
+                          ? 'text-[#0a1e36] font-bold'
+                          : isDark ? 'text-gray-400 font-medium' : 'text-[#475569] font-medium'
+                      }`
+                    }
                     style={{
-                      color:       isActive(item.to) ? 'var(--color-rose-gold)' : (isDark ? 'var(--color-dark-text)' : 'var(--color-charcoal)'),
                       borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(200,169,154,0.12)',
-                      fontWeight:  isActive(item.to) ? 600 : 400,
                       letterSpacing: '0.02em',
                     }}
+                    onClick={() => setMobileOpen(false)}
                   >
-                    <span style={{ color: isActive(item.to) ? 'var(--color-gold)' : 'var(--color-rose-sand)' }}>
-                      {item.icon}
-                    </span>
-                    {item.label}
-                  </Link>
+                    {({ isActive }) => (
+                      <>
+                        <span className={`transition-colors duration-300 ${isActive ? 'text-[#D4AF37]' : 'text-current'}`}>
+                          {item.icon}
+                        </span>
+                        {item.label}
+                      </>
+                    )}
+                  </NavLink>
                 </motion.div>
               ))}
 

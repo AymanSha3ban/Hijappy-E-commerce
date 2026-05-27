@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '../contexts/ThemeContext'
+import { useToast } from '../contexts/ToastContext'
 import { Link } from 'react-router-dom'
 import { getProducts } from '../services/api'
 import ProductCard, { ProductCardSkeleton } from '../components/ProductCard'
@@ -168,6 +169,7 @@ function SectionHeader({ label, title }: { label: string; title: string }) {
 export default function HomePage() {
   const { t, i18n }     = useTranslation()
   const { isDark }      = useTheme()
+  const { addToast }    = useToast()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading]   = useState(true)
   const [slide, setSlide]       = useState(0)
@@ -201,8 +203,8 @@ export default function HomePage() {
 
   useEffect(() => {
     document.title = isAr ? 'حجابي | حجابات وأوشحة فاخرة' : 'Hijappy | Luxury Hijabs & Scarves'
-    getProducts().then(r => setProducts(r.data)).catch(console.error).finally(() => setLoading(false))
-  }, [isAr])
+    getProducts().then(r => setProducts(r.data)).catch(() => addToast(t('home.error_loading', 'Failed to load products'), 'error')).finally(() => setLoading(false))
+  }, [isAr, t, addToast])
 
   const displayProducts = products.length > 0 ? products : PLACEHOLDERS
   const newArrivals     = displayProducts.slice(0, 4)

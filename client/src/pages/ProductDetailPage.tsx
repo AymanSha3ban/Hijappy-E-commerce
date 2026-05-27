@@ -3,8 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '../contexts/ThemeContext'
+import { useCart } from '../contexts/CartContext'
 import { getProduct } from '../services/api'
-import LeadFormModal from '../components/LeadFormModal'
 import Navbar from '../components/Navbar'
 import {
   ArrowLeft, ArrowRight, Truck, RefreshCcw, Sparkles,
@@ -45,7 +45,7 @@ export default function ProductDetailPage() {
   const [direction, setDirection]   = useState(1)
   const [activeColor, setActiveColor] = useState(0)
   const [quantity, setQuantity]     = useState(1)
-  const [modalOpen, setModalOpen]   = useState(false)
+  const { addItem }                 = useCart()
   const timerRef  = useRef<ReturnType<typeof setInterval> | null>(null)
   const dragStartX = useRef(0)
   const isAr = i18n.language === 'ar'
@@ -452,12 +452,23 @@ export default function ProductDetailPage() {
               <motion.button
                 id="buy-now-btn"
                 className="btn-primary btn-liquid w-full text-base py-4"
-                onClick={() => setModalOpen(true)}
+                onClick={() => {
+                  addItem({
+                    id: Date.now(),
+                    productId: product.id,
+                    name: product.name,
+                    price: product.price,
+                    stock: product.stock,
+                    image: images[0],
+                    quantity
+                  })
+                  navigate('/cart')
+                }}
                 whileTap={{ scale: 0.97 }}
                 disabled={product.stock === 0}
                 style={{ fontSize: '0.88rem' }}
               >
-                {t('product.buy_now')}
+                {t('product.buy_now', 'Buy Now')}
               </motion.button>
               <p className="text-xs text-center flex items-center justify-center gap-1.5" style={{ color: 'var(--color-pastel-rose)' }}>
                 <Phone size={12} strokeWidth={1.5} />
@@ -490,14 +501,7 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
-      <LeadFormModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        product={{ id: product.id, name: product.name, price: product.price, stock: product.stock }}
-        initialQuantity={quantity}
-      />
-
-      {/* ── Sticky Mobile Cart Bar ── */}
+      <div className="border-t pt-6" style={{ borderColor: 'var(--color-blush)' }}>
       {product.stock > 0 && (
         <motion.div
           className="sticky-cart-bar md:hidden"
@@ -532,13 +536,25 @@ export default function ProductDetailPage() {
             id="sticky-buy-btn"
             className="btn-primary"
             style={{ padding: '0.75rem 1.75rem', fontSize: '0.8rem', whiteSpace: 'nowrap', flexShrink: 0 }}
-            onClick={() => setModalOpen(true)}
+            onClick={() => {
+              addItem({
+                id: Date.now(),
+                productId: product.id,
+                name: product.name,
+                price: product.price,
+                stock: product.stock,
+                image: images[0],
+                quantity
+              })
+              navigate('/cart')
+            }}
             whileTap={{ scale: 0.96 }}
           >
             {t('product.buy_now')}
           </motion.button>
         </motion.div>
       )}
+      </div>
     </div>
   )
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuth } from '../contexts/AuthContext'
+import { useToast } from '../contexts/ToastContext'
 import { getDashboardStats } from '../services/api'
 import { useTranslation } from 'react-i18next'
 import {
@@ -30,6 +31,7 @@ interface StatCardProps {
 
 function StatCard({ label, value, icon, accentColor, delay }: StatCardProps) {
   const [display, setDisplay] = useState(0)
+  const [trend] = useState(() => (Math.random() * 5).toFixed(1))
 
   useEffect(() => {
     const duration = 1200
@@ -68,7 +70,7 @@ function StatCard({ label, value, icon, accentColor, delay }: StatCardProps) {
             </h2>
             {value > 0 && (
               <span className="text-[0.65rem] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                <TrendingUp size={10} /> +{(Math.random() * 5).toFixed(1)}%
+                <TrendingUp size={10} /> +{trend}%
               </span>
             )}
           </div>
@@ -110,14 +112,11 @@ const statusCls: Record<string, string> = {
   CANCELLED: 'badge-cancelled',
 }
 
-// ── Admin Sidebar ─────────────────────────────────────────────────────────────
-export function AdminSidebar() {
+function SidebarContent({ setIsMobileOpen }: { setIsMobileOpen?: (val: boolean) => void }) {
   const { admin, logout } = useAuth()
   const navigate          = useNavigate()
-  const { t, i18n }       = useTranslation()
+  const { t }             = useTranslation()
   const location          = window.location.pathname
-  const [isMobileOpen, setIsMobileOpen] = useState(false)
-  const isRTL = i18n.language === 'ar'
 
   const navItems = [
     { label: t('admin.sidebar.dashboard'),  to: '/admin',            icon: <LayoutDashboard size={17} strokeWidth={1.5} /> },
@@ -129,7 +128,7 @@ export function AdminSidebar() {
 
   const isActive = (to: string) => to === '/admin' ? location === '/admin' : location.startsWith(to) && to !== '/'
 
-  const SidebarContent = () => (
+  return (
     <>
       {/* Logo */}
       <div className="flex items-center justify-between mb-10 px-3">
@@ -149,13 +148,15 @@ export function AdminSidebar() {
         </Link>
         
         {/* Mobile Close Button */}
-        <button 
-          onClick={() => setIsMobileOpen(false)}
-          className="lg:hidden w-8 h-8 flex items-center justify-center rounded-full border-none cursor-pointer"
-          style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)' }}
-        >
-          <X size={18} />
-        </button>
+        {setIsMobileOpen && (
+          <button 
+            onClick={() => setIsMobileOpen(false)}
+            className="lg:hidden w-8 h-8 flex items-center justify-center rounded-full border-none cursor-pointer"
+            style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)' }}
+          >
+            <X size={18} />
+          </button>
+        )}
       </div>
 
       {/* Nav items */}
@@ -166,7 +167,7 @@ export function AdminSidebar() {
             <Link
               key={item.to}
               to={item.to}
-              onClick={() => setIsMobileOpen(false)}
+              onClick={() => setIsMobileOpen?.(false)}
               className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm no-underline transition-all relative overflow-hidden"
               style={{
                 color:      active ? '#fff' : 'rgba(255,255,255,0.58)',
@@ -209,6 +210,13 @@ export function AdminSidebar() {
       </div>
     </>
   )
+}
+
+// ── Admin Sidebar ─────────────────────────────────────────────────────────────
+export function AdminSidebar() {
+  const { i18n }       = useTranslation()
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const isRTL = i18n.language === 'ar'
 
   return (
     <>
@@ -250,7 +258,7 @@ export function AdminSidebar() {
                 boxShadow: isRTL ? '-20px 0 60px rgba(0,0,0,0.5)' : '20px 0 60px rgba(0,0,0,0.5)'
               }}
             >
-              <SidebarContent />
+              <SidebarContent setIsMobileOpen={setIsMobileOpen} />
             </motion.aside>
           </>
         )}
@@ -277,13 +285,17 @@ export function AdminSidebar() {
 // ── Dashboard Page ────────────────────────────────────────────────────────────
 export default function AdminDashboardPage() {
   const { t, i18n }       = useTranslation()
+  const { addToast }      = useToast()
   const [stats, setStats] = useState<Stats | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     document.title = `${t('admin.sidebar.dashboard')} | Hijappy`
-    getDashboardStats().then((r) => setStats(r.data)).catch(console.error).finally(() => setLoading(false))
-  }, [t])
+    getDashboardStats()
+      .then((r) => setStats(r.data))
+      .catch(() => addToast(t('admin.dashboard.error_loading', 'Failed to load stats'), 'error'))
+      .finally(() => setLoading(false))
+  }, [t, addToast])
 
   const locale = i18n.language === 'ar' ? 'ar-EG' : 'en-US'
 

@@ -8,6 +8,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { Search, SlidersHorizontal, Package, X } from 'lucide-react'
 import { useTheme } from '../contexts/ThemeContext'
+import { useToast } from '../contexts/ToastContext'
 
 interface Product  { id: number; name: string; price: number; images: string[]; colors: string[]; category?: { id: number; name: string } }
 interface Category { id: number; name: string; slug: string }
@@ -39,6 +40,7 @@ function normalizeText(text: string): string {
 export default function ShopPage() {
   const { t, i18n }                         = useTranslation()
   const { isDark }                          = useTheme()
+  const { addToast }                        = useToast()
   const location                            = useLocation()
   const navigate                            = useNavigate()
   const searchInputRef                      = useRef<HTMLInputElement>(null)
@@ -55,9 +57,9 @@ export default function ShopPage() {
     document.title = isAr ? 'حجابي | المتجر' : 'Hijappy | Shop'
     Promise.all([getProducts(), getCategories()])
       .then(([pr, cr]) => { setProducts(pr.data); setCategories(cr.data) })
-      .catch(console.error)
+      .catch(() => addToast(t('shop.error_loading', 'Failed to load products'), 'error'))
       .finally(() => setLoading(false))
-  }, [isAr])
+  }, [isAr, t, addToast])
 
   useEffect(() => {
     const params = new URLSearchParams(location.search)

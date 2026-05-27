@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
+import { useToast } from '../contexts/ToastContext'
 import { getCategories, createCategory, updateCategory, deleteCategory } from '../services/api'
 import { AdminSidebar } from './AdminDashboardPage'
 
@@ -11,6 +12,7 @@ const toSlug = (s: string) =>
 
 export default function AdminCategoriesPage() {
   const { t } = useTranslation()
+  const { addToast } = useToast()
   const [cats, setCats] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
@@ -24,7 +26,7 @@ export default function AdminCategoriesPage() {
 
   const load = () => {
     setLoading(true)
-    getCategories().then((r) => setCats(r.data)).catch(console.error).finally(() => setLoading(false))
+    getCategories().then((r) => setCats(r.data)).catch(() => addToast(t('admin.categories.error_loading', 'Failed to load categories'), 'error')).finally(() => setLoading(false))
   }
 
   useEffect(() => { document.title = `${t('admin.categories.title')} | Hijappy`; load() }, [t])
@@ -56,8 +58,8 @@ export default function AdminCategoriesPage() {
 
   const handleDelete = async () => {
     if (deleteId == null) return
-    try { await deleteCategory(deleteId); setDeleteId(null); load() }
-    catch { alert('Could not delete — category may have products.') }
+    try { await deleteCategory(deleteId); setDeleteId(null); load(); addToast(t('admin.categories.delete_success', 'Category deleted'), 'success') }
+    catch { addToast(t('admin.categories.delete_error', 'Could not delete — category may have products.'), 'error') }
   }
 
   const inp = 'w-full px-4 py-3 rounded-xl text-sm outline-none border transition-all'

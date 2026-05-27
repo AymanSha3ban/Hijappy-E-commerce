@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import { getOrders, updateOrderStatus } from '../services/api'
+import { useToast } from '../contexts/ToastContext'
+import { getOrders, updateOrderStatus, deleteOrder, clearOrders } from '../services/api'
 import { AdminSidebar } from './AdminDashboardPage'
-import { Loader2, Inbox } from 'lucide-react'
+import { Loader2, Inbox, Trash2 } from 'lucide-react'
 
 interface Order {
   id: number; customerName: string; address: string
@@ -19,7 +21,9 @@ const statusCls: Record<string, string> = {
 }
 
 export default function AdminOrdersPage() {
+  const navigate                        = useNavigate()
   const { t, i18n }                     = useTranslation()
+  const { addToast }                    = useToast()
   const [orders, setOrders]             = useState<Order[]>([])
   const [loading, setLoading]           = useState(true)
   const [filter, setFilter]             = useState('ALL')
@@ -28,7 +32,7 @@ export default function AdminOrdersPage() {
   const load = (status?: string) => {
     setLoading(true)
     const params = status && status !== 'ALL' ? { status } : undefined
-    getOrders(params).then((r) => setOrders(r.data)).catch(console.error).finally(() => setLoading(false))
+    getOrders(params).then((r) => setOrders(r.data)).catch(() => addToast(t('admin.orders.error_loading', 'Failed to load orders'), 'error')).finally(() => setLoading(false))
   }
 
   useEffect(() => { document.title = `${t('admin.orders.title')} | Hijappy`; load() }, [t])
@@ -40,8 +44,29 @@ export default function AdminOrdersPage() {
     try {
       await updateOrderStatus(id, status)
       setOrders((prev) => prev.map((o) => o.id === id ? { ...o, status: status as Order['status'] } : o))
-    } catch { alert('Failed to update status.') }
+    } catch { addToast(t('admin.orders.update_error', 'Failed to update status.'), 'error') }
     finally { setUpdating(null) }
+  }
+
+  const handleDelete = async (id: number) => {
+    if (window.confirm(t('admin.orders.confirm_delete'))) {
+      try {
+        await deleteOrder(id)
+        load(filter)
+        addToast(t('admin.orders.delete_success', 'Order deleted'), 'success')
+      } catch { addToast(t('admin.orders.delete_error', 'Failed to delete order.'), 'error') }
+    }
+  }
+
+  const handleClearAll = async () => {
+    const statusText = filter === 'ALL' ? '' : t(`admin.orders.status_${filter.toLowerCase()}`)
+    if (window.confirm(t('admin.orders.confirm_clear_all', { status: statusText }))) {
+      try {
+        await clearOrders(filter)
+        load(filter)
+        addToast(t('admin.orders.clear_success', 'Orders cleared'), 'success')
+      } catch { addToast(t('admin.orders.clear_error', 'Failed to clear orders.'), 'error') }
+    }
   }
 
   const filters = [
@@ -84,6 +109,21 @@ export default function AdminOrdersPage() {
                     {f.label}
                   </motion.button>
                 ))}
+                
+                {orders.length > 0 && (
+                  <button 
+                    onClick={handleClearAll}
+                    className="px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider border cursor-pointer transition-all"
+                    style={{
+                      marginInlineStart: 'auto',
+                      borderColor: '#DC2626', color: '#DC2626', background: 'transparent'
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = '#FEE2E2')}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                  >
+                    {t('admin.orders.clear_all', { status: filter === 'ALL' ? '' : t(`admin.orders.status_${filter.toLowerCase()}`) })}
+                  </button>
+                )}
               </div>
             </div>
 
@@ -138,7 +178,8 @@ export default function AdminOrdersPage() {
                         <motion.tr
                           key={order.id}
                           layout
-                          className="border-t table-row-hover"
+                          onClick={() => navigate(`/admin/orders/${order.id}`)}
+                          className="border-t table-row-hover cursor-pointer"
                           style={{
                             borderColor: 'rgba(200,169,154,0.12)',
                             background:  i % 2 === 0 ? '#fff' : 'rgba(250,246,242,0.45)',
@@ -152,6 +193,7 @@ export default function AdminOrdersPage() {
                             <a
                               href={`https://wa.me/${order.whatsapp.replace(/\D/g, '')}`}
                               target="_blank" rel="noreferrer"
+                              onClick={(e) => e.stopPropagation()}
                               className="no-underline font-medium"
                               style={{ color: 'var(--color-sage-dark)' }}
                             >
@@ -165,23 +207,32 @@ export default function AdminOrdersPage() {
                             {new Date(order.createdAt).toLocaleDateString(locale)}
                           </td>
                           <td className="px-5 py-4">
-                            <select
-                              id={`status-select-${order.id}`}
-                              value={order.status}
-                              disabled={updating === order.id}
-                              onChange={(e) => handleStatus(order.id, e.target.value)}
-                              className="text-xs rounded-lg px-3 py-2 outline-none border cursor-pointer"
-                              style={{
-                                borderColor: 'var(--color-blush)',
-                                background:  'var(--color-parchment)',
-                                color:       'var(--color-charcoal)',
-                                fontFamily:  'inherit',
-                              }}
-                            >
-                              <option value="PENDING">{t('admin.orders.status_pending')}</option>
-                              <option value="CONFIRMED">{t('admin.orders.status_confirmed')}</option>
-                              <option value="CANCELLED">{t('admin.orders.status_cancelled')}</option>
-                            </select>
+                            <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                              <select
+                                id={`status-select-${order.id}`}
+                                value={order.status}
+                                disabled={updating === order.id}
+                                onChange={(e) => handleStatus(order.id, e.target.value)}
+                                className="text-xs rounded-lg px-3 py-2 outline-none border cursor-pointer"
+                                style={{
+                                  borderColor: 'var(--color-blush)',
+                                  background:  'var(--color-parchment)',
+                                  color:       'var(--color-charcoal)',
+                                  fontFamily:  'inherit',
+                                }}
+                              >
+                                <option value="PENDING">{t('admin.orders.status_pending')}</option>
+                                <option value="CONFIRMED">{t('admin.orders.status_confirmed')}</option>
+                                <option value="CANCELLED">{t('admin.orders.status_cancelled')}</option>
+                              </select>
+                              <button 
+                                onClick={() => handleDelete(order.id)}
+                                title={t('admin.orders.delete_order')}
+                                className="p-2 rounded-lg text-[#D4AF37] hover:bg-[#D4AF37]/10 transition-colors border-none bg-transparent cursor-pointer"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
                           </td>
                         </motion.tr>
                       ))}

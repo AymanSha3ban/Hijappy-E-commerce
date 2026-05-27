@@ -12,12 +12,10 @@ const createOrderSchema = z.object({
   address: z.string().min(5, 'Address is required'),
   whatsapp: z
     .string()
-    .min(7, 'WhatsApp number is required')
-    .regex(/^\+?[0-9\s\-()]+$/, 'Invalid WhatsApp number'),
+    .regex(/^01[0125][0-9]{8}$/, 'Invalid Egyptian phone number'),
   phone: z
     .string()
-    .min(7, 'Phone number is required')
-    .regex(/^\+?[0-9\s\-()]+$/, 'Invalid phone number'),
+    .regex(/^01[0125][0-9]{8}$/, 'Invalid Egyptian phone number'),
   productId: z.number().int().positive('Product ID is required'),
   quantity: z.number().int().min(1, 'Quantity must be at least 1').default(1),
 });
@@ -123,6 +121,31 @@ router.patch('/:id/status', verifyToken, async (req: Request, res: Response): Pr
     res.json(order);
   } catch {
     res.status(404).json({ error: 'Order not found.' });
+  }
+});
+
+// ── DELETE /api/orders/clear-all — Protected ──────────────────────────────────
+router.delete('/clear-all', verifyToken, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { status } = req.query;
+    await prisma.order.deleteMany({
+      where: status && status !== 'ALL' ? { status: status as 'PENDING' | 'CONFIRMED' | 'CANCELLED' } : {},
+    });
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: 'Failed to clear orders.' });
+  }
+});
+
+// ── DELETE /api/orders/:id — Protected ────────────────────────────────────────
+router.delete('/:id', verifyToken, async (req: Request, res: Response): Promise<void> => {
+  try {
+    await prisma.order.delete({
+      where: { id: Number(req.params.id) },
+    });
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: 'Failed to delete order.' });
   }
 });
 

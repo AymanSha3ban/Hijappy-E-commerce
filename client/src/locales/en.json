@@ -94,6 +94,7 @@
     "error_address": "Please enter a full address",
     "error_whatsapp": "WhatsApp number is required",
     "error_phone": "Phone number is required",
+    "invalid_phone": "Please enter a valid 11-digit Egyptian number.",
     "error_general": "Something went wrong. Please try again."
   },
   "admin": {
@@ -197,7 +198,11 @@
       "no_orders_sub": "Orders from the storefront will appear here.",
       "status_pending": "Pending",
       "status_confirmed": "Confirmed",
-      "status_cancelled": "Cancelled"
+      "status_cancelled": "Cancelled",
+      "delete_order": "Delete",
+      "clear_all": "Clear All {{status}}",
+      "confirm_delete": "Are you sure you want to delete this order?",
+      "confirm_clear_all": "Are you sure you want to clear all {{status}} orders?"
     }
   },
   "footer": {

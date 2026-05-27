@@ -12,8 +12,9 @@ import AdminProductsPage from './pages/AdminProductsPage'
 import AdminOrdersPage from './pages/AdminOrdersPage'
 import AdminCategoriesPage from './pages/AdminCategoriesPage'
 import ProtectedRoute from './components/ProtectedRoute'
-import FavoritesPage from './pages/FavoritesPage'
-import { FavoritesProvider } from './contexts/FavoritesContext'
+import { CartProvider } from './contexts/CartContext'
+import CartPage from './pages/CartPage'
+import AdminOrderDetailPage from './pages/AdminOrderDetailPage'
 
 // ── Stagger children variants ─────────────────────────────────────────────────
 const pageContainerVariants = {
@@ -70,15 +71,15 @@ export default function App() {
   }, [t, i18n.language])
 
   return (
-    <FavoritesProvider>
+    <CartProvider>
       <ScrollToTop />
       <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         {/* ── Public Storefront ── */}
         <Route path="/"            element={<PageWrapper><HomePage /></PageWrapper>} />
         <Route path="/shop"         element={<PageWrapper><ShopPage /></PageWrapper>} />
-        <Route path="/favorites"    element={<PageWrapper><FavoritesPage /></PageWrapper>} />
         <Route path="/products/:id" element={<PageWrapper><ProductDetailPage /></PageWrapper>} />
+        <Route path="/cart"         element={<PageWrapper><CartPage /></PageWrapper>} />
 
         {/* ── Admin Auth ── */}
         <Route path="/admin/login" element={<PageWrapper><AdminLoginPage /></PageWrapper>} />
@@ -88,6 +89,7 @@ export default function App() {
         <Route path="/admin/products"   element={<ProtectedRoute><PageWrapper><AdminProductsPage /></PageWrapper></ProtectedRoute>} />
         <Route path="/admin/categories" element={<ProtectedRoute><PageWrapper><AdminCategoriesPage /></PageWrapper></ProtectedRoute>} />
         <Route path="/admin/orders"     element={<ProtectedRoute><PageWrapper><AdminOrdersPage /></PageWrapper></ProtectedRoute>} />
+        <Route path="/admin/orders/:id" element={<ProtectedRoute><PageWrapper><AdminOrderDetailPage /></PageWrapper></ProtectedRoute>} />
 
         {/* ── 404 ── */}
         <Route path="*" element={
@@ -124,6 +126,6 @@ export default function App() {
         } />
       </Routes>
     </AnimatePresence>
-    </FavoritesProvider>
+    </CartProvider>
   )
 }

@@ -3,10 +3,7 @@ import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from
 import { Link } from 'react-router-dom'
 import { ArrowUpRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Heart } from 'lucide-react'
-import { useToast } from '../contexts/ToastContext'
 import { useTheme } from '../contexts/ThemeContext'
-import { useFavorites } from '../contexts/FavoritesContext'
 
 const API_BASE = (import.meta.env.VITE_API_URL as string ?? '').replace(/\/api\/?$/, '')
 
@@ -57,14 +54,9 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   const cardRef  = useRef<HTMLDivElement>(null)
   const [hovered, setHovered]       = useState(false)
   const [galleryIdx, setGalleryIdx] = useState(0)
-  const [heartPop, setHeartPop]     = useState(false)
   const { i18n } = useTranslation()
-  const { addToast } = useToast()
   const { isDark } = useTheme()
-  const { toggleFavorite, isFavorite } = useFavorites()
   const isAr = i18n.language === 'ar'
-
-  const isFavorited = isFavorite(product.id)
 
   // 3D Tilt — refined
   const mouseX  = useMotionValue(0)
@@ -155,44 +147,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
             />
           </AnimatePresence>
 
-          {/* Favorite Button */}
-          <motion.button
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              const next = !isFavorited
-              toggleFavorite(product)
-              if (next) {
-                setHeartPop(true)
-                setTimeout(() => setHeartPop(false), 800)
-                addToast(isAr ? 'تمت الإضافة للمفضلة ♥' : 'Added to favorites ♥', 'success')
-              }
-            }}
-            whileHover={{ scale: 1.12 }}
-            whileTap={{ scale: 0.85 }}
-            className={`absolute top-4 ${isAr ? 'left-4' : 'right-4'} z-10 w-9 h-9 rounded-full flex items-center justify-center border-none cursor-pointer glass`}
-            style={{ 
-              background: isFavorited
-                ? 'rgba(239,68,68,0.18)'
-                : (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.55)'),
-              backdropFilter: 'blur(12px)',
-              border: isFavorited ? '1px solid rgba(239,68,68,0.35)' : '1px solid rgba(255,255,255,0.25)',
-              color: isFavorited ? '#ef4444' : 'rgba(255,255,255,0.85)',
-              transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
-              boxShadow: isFavorited ? '0 0 16px rgba(239,68,68,0.22)' : 'none',
-            }}
-          >
-            <motion.span
-              animate={heartPop ? { scale: [1, 1.4, 0.9, 1.15, 1] } : { scale: 1 }}
-              transition={{ duration: 0.55, ease: 'easeOut' }}
-            >
-              <Heart 
-                size={18} 
-                fill={isFavorited ? '#ef4444' : 'none'} 
-                strokeWidth={2}
-              />
-            </motion.span>
-          </motion.button>
+
 
           {/* Dot indicators */}
           {hovered && hasMultiple && (

@@ -41,10 +41,9 @@ const socialLinks = [
 ]
 
 const quickLinks = [
-  { label: { ar: 'المجموعة',   en: 'Collection'  }, to: '/'        },
-  { label: { ar: 'منتجاتنا',  en: 'Products'    }, to: '/shop'    },
-  { label: { ar: 'عن العلامة', en: 'About Brand' }, to: '#about'  },
-  { label: { ar: 'لوحة التحكم', en: 'Admin'      }, to: '/admin'   },
+  { label: { ar: 'الرئيسية',   en: 'Home'  }, to: '/'        },
+  { label: { ar: 'المتجر',  en: 'Shop'    }, to: '/shop'    },
+  { label: { ar: 'عن العلامة', en: 'About' }, to: '/#about'  },
 ]
 
 // ── Newsletter sub-component ──────────────────────────────────────────────────
@@ -177,24 +176,7 @@ export default function Footer() {
                   rel="noreferrer"
                   aria-label={label}
                   whileHover={{ y: -4 }}
-                  transition={{ duration: 0.2 }}
-                  className="w-9 h-9 rounded-full flex items-center justify-center no-underline"
-                  style={{
-                    background:   isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.5)',
-                    color:        isDark ? 'var(--color-dark-muted)' : 'var(--color-mocha)',
-                    border:       isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(244, 224, 225, 0.6)',
-                    transition:   'all 0.25s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background   = 'rgba(244,224,225,0.15)'
-                    e.currentTarget.style.borderColor  = 'rgba(244,224,225,0.4)'
-                    e.currentTarget.style.color        = 'var(--color-pastel-rose)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background   = 'rgba(255,255,255,0.07)'
-                    e.currentTarget.style.borderColor  = 'rgba(255,255,255,0.1)'
-                    e.currentTarget.style.color        = 'rgba(255,255,255,0.62)'
-                  }}
+                  className="w-9 h-9 rounded-full flex items-center justify-center no-underline transition-all duration-300 ease-in-out text-[#D4AF37] hover:text-[#f5d568] bg-white/50 hover:bg-white/80 dark:bg-white/5 dark:hover:bg-white/10 border border-[#D4AF37]/30 hover:border-[#D4AF37]"
                 >
                   <Icon size={16} strokeWidth={1.5} />
                 </motion.a>
@@ -220,16 +202,9 @@ export default function Footer() {
                 <li key={link.to + link.label.en}>
                   <Link
                     to={link.to}
-                    className="flex items-center gap-2 text-sm no-underline"
-                    style={{ color: isDark ? 'var(--color-dark-muted)' : 'var(--color-mocha)', transition: 'color 0.2s ease' }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = 'var(--color-rose-gold)'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = isDark ? 'var(--color-dark-muted)' : 'var(--color-mocha)'
-                    }}
+                    className={`flex items-center gap-2 text-sm no-underline transition-all duration-300 ease-in-out ${isDark ? 'text-gray-400 hover:text-[#D4AF37]' : 'text-[#475569] hover:text-[#D4AF37]'}`}
                   >
-                    <ArrowIcon size={12} strokeWidth={1.5} style={{ flexShrink: 0 }} />
+                    <ArrowIcon size={12} strokeWidth={1.5} style={{ flexShrink: 0 }} className="text-[#D4AF37]" />
                     {isRTL ? link.label.ar : link.label.en}
                   </Link>
                 </li>
@@ -251,13 +226,10 @@ export default function Footer() {
               {isRTL ? 'تواصل معنا' : 'Contact'}
             </h3>
             <a
-              href="mailto:hello@hijappy.com"
-              className="flex items-center gap-2.5 text-sm no-underline mb-4"
-              style={{ color: isDark ? 'var(--color-dark-muted)' : 'var(--color-mocha)', transition: 'color 0.2s ease' }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-rose-gold)')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = isDark ? 'var(--color-dark-muted)' : 'var(--color-mocha)')}
+              href="mailto:hello@Louli.com"
+              className={`flex items-center gap-2.5 text-sm no-underline mb-4 transition-all duration-300 ease-in-out ${isDark ? 'text-gray-400 hover:text-[#D4AF37]' : 'text-[#475569] hover:text-[#D4AF37]'}`}
             >
-              <Mail size={14} strokeWidth={1.5} />
+              <Mail size={14} strokeWidth={1.5} className="text-[#D4AF37]" />
               hello@Louli.com
             </a>
             <p

@@ -53,9 +53,12 @@ export const deleteCategory   = (id: number) => api.delete(`/categories/${id}`)
 
 // ── Orders ────────────────────────────────────────────────────────────────────
 export const getOrders        = (params?: Record<string, string>) => api.get('/orders', { params })
+export const getOrder         = (id: number) => api.get(`/orders/${id}`)
 export const createOrder      = (data: unknown) => api.post('/orders', data)
 export const updateOrderStatus = (id: number, status: string, notes?: string) =>
   api.patch(`/orders/${id}/status`, { status, notes })
+export const deleteOrder      = (id: number) => api.delete(`/orders/${id}`)
+export const clearOrders      = (status?: string) => api.delete('/orders/clear-all', { params: status && status !== 'ALL' ? { status } : {} })
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 export const getDashboardStats = () => api.get('/dashboard/stats')

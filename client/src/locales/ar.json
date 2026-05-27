@@ -94,6 +94,7 @@
     "error_address": "الرجاء إدخال عنوان كامل",
     "error_whatsapp": "رقم واتساب مطلوب",
     "error_phone": "رقم الهاتف مطلوب",
+    "invalid_phone": "برجاء ادخال رقم مصري صحيح مكون من 11 رقم",
     "error_general": "حدث خطأ. يرجى المحاولة مرة أخرى."
   },
   "admin": {
@@ -197,7 +198,11 @@
       "no_orders_sub": "الطلبات من الواجهة ستظهر هنا.",
       "status_pending": "معلّق",
       "status_confirmed": "مؤكّد",
-      "status_cancelled": "ملغي"
+      "status_cancelled": "ملغي",
+      "delete_order": "حذف",
+      "clear_all": "حذف كل {{status}}",
+      "confirm_delete": "هل أنت متأكد من حذف هذا الطلب؟",
+      "confirm_clear_all": "هل أنت متأكد من حذف كل طلبات ({{status}})؟"
     }
   },
   "footer": {
